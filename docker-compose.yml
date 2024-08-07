@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: blogdb
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./db_data/postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
