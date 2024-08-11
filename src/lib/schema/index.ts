@@ -19,7 +19,6 @@ import {
   categoryToProductMap,
   categoryToAttributeCategoryMap,
   categoryToAttributeCategoryRelations,
-  categoryToProductRelations,
 } from './category.schema';
 import { discounts, discountsRelations } from './discount.schema';
 import { favorites, favoritesRelations } from './favorites.schema';
@@ -65,6 +64,12 @@ import {
 } from './user.schema';
 import { storeRelations, stores } from './store.schema';
 import { coupons, couponsRelations } from './coupon.schema';
+import {
+  collections,
+  collectionsRelations,
+  collectionsToProductsMap,
+  collectionsToProductsMapRelations,
+} from './collection.schema';
 
 export type TSession = typeof sessions.$inferSelect;
 export type TFavorite = typeof favorites.$inferSelect;
@@ -97,11 +102,18 @@ export type TOrder = typeof orders.$inferSelect;
 export type TOrderItem = typeof orderItems.$inferSelect;
 export type TOrdersToStore = typeof ordersToStore.$inferSelect;
 export type TSearchHistory = typeof searchHistory.$inferSelect;
+export type TCollection = typeof collections.$inferSelect;
+export type TCollectionsToProductsMap =
+  typeof collectionsToProductsMap.$inferSelect;
 export type TUserRole = (typeof userRoleEnum.enumValues)[number];
 export type TOrderStatusEnum = typeof orderStatusEnum.enumValues;
 export type TShipmentStatusEnum = typeof shipmentStatusEnum.enumValues;
 
 export {
+  collections,
+  collectionsRelations,
+  collectionsToProductsMap,
+  collectionsToProductsMapRelations,
   favorites,
   favoritesRelations,
   productAttributesRelations,
@@ -129,7 +141,6 @@ export {
   categories,
   categoriesRelations,
   categoryToProductMap,
-  categoryToProductRelations,
   categoryToAttributeCategoryMap,
   categoryToAttributeCategoryRelations,
   accounts,
