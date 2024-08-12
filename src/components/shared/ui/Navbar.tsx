@@ -1,18 +1,24 @@
 'use client';
 
-import { navbarCategories, navbarCollections } from '@/utils/mockData';
 import React, { useState } from 'react';
 import LinkUnderlined from '../Animated/LinkUnderlined';
 import Container from './Container';
-import { spaceMono } from '@/lib/fonts';
-import { LuShoppingBag, LuUser, LuSearch } from 'react-icons/lu';
+import { LuShoppingBag, LuSearch } from 'react-icons/lu';
 import { AnimatePresence } from 'motion/react';
-
-import ShopMenu from '@/components/NavigationBar/ShopMenu';
-import CollectionMenu from '@/components/NavigationBar/CollectionMenu';
-import UserDisplay from '@/components/NavigationBar/UserDisplay';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { ChevronRight } from 'lucide-react';
+import Hamburger from 'hamburger-react';
 import { useSession } from 'next-auth/react';
 import Logo from './Logo';
+import { navbarCollections, navbarCategories } from '@/utils/mockData';
+import {
+  SearchDrawer,
+  CollectionMenu,
+  CollectionsDrawer,
+  ShopDrawer,
+  ShopMenu,
+  UserDisplay,
+} from '@/components/NavigationBar';
 
 export const containerVariants = {
   hidden: { opacity: 0 },
@@ -44,12 +50,11 @@ export const itemVariants = {
 const Navbar = () => {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isCollectionsOpen, setIsCollectionsOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState<
     'shop' | 'collections' | null
   >(null);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const session = useSession();
   const user = session?.data?.user;
 
@@ -75,23 +80,26 @@ const Navbar = () => {
               </div>
               <div className="flex items-center gap-1">
                 <LuSearch size={20} />
-                <button
-                  onClick={() => setIsSearchOpen(true)}
-                  className="hover-underline-animation"
-                >
-                  SEARCH
-                </button>
+                <button className="hover-underline-animation">SEARCH</button>
               </div>
               <UserDisplay />
               <div className="flex items-center gap-1">
                 <LuShoppingBag size={20} />
-                <button
-                  onClick={() => setIsCartOpen(true)}
-                  className="hover-underline-animation"
-                >
-                  CART
-                </button>
+                <button className="hover-underline-animation">CART</button>
               </div>
+            </div>
+            <div className="md:hidden">
+              <Hamburger
+                toggled={isMobileMenuOpen}
+                toggle={setIsMobileMenuOpen}
+                color="#000"
+                label="Menu"
+                size={24}
+                distance="sm"
+                easing="ease-in"
+                rounded
+                hideOutline
+              />
             </div>
           </div>
         </Container>
@@ -101,7 +109,6 @@ const Navbar = () => {
             <ShopMenu
               categories={navbarCategories}
               setIsShopOpen={setIsShopOpen}
-              isShopOpen={isShopOpen}
             />
           )}
 
@@ -113,6 +120,64 @@ const Navbar = () => {
           )}
         </AnimatePresence>
       </div>
+
+      <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+        <SheetContent side="right" className="w-full max-w-xs p-2">
+          <div className="flex flex-col space-y-3 h-full text-xl mt-10">
+            <button
+              onClick={() => setActiveSubmenu('shop')}
+              className="flex items-center justify-between w-full"
+            >
+              <LinkUnderlined href="/products">SHOP</LinkUnderlined>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={() => setActiveSubmenu('collections')}
+              className="flex items-center justify-between w-full"
+            >
+              <LinkUnderlined>COLLECTIONS</LinkUnderlined>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center justify-between w-full">
+              <LinkUnderlined href="/search">SEARCH</LinkUnderlined>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+
+            <div className="flex items-center justify-between w-full">
+              {user ? (
+                <LinkUnderlined href="/account">ACCOUNT</LinkUnderlined>
+              ) : (
+                <LinkUnderlined href="/signin">LOGIN</LinkUnderlined>
+              )}
+              <ChevronRight className="w-4 h-4" />
+            </div>
+
+            <div className="flex items-center justify-between w-full">
+              <LinkUnderlined href="/cart">CART</LinkUnderlined>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <ShopDrawer
+        categories={navbarCategories}
+        activeSubmenu={activeSubmenu}
+        setActiveSubmenu={setActiveSubmenu}
+      />
+
+      <CollectionsDrawer
+        collections={navbarCollections}
+        activeSubmenu={activeSubmenu}
+        setActiveSubmenu={setActiveSubmenu}
+      />
+
+      <SearchDrawer
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </>
   );
 };

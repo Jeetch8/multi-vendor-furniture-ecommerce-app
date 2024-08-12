@@ -2216,6 +2216,11 @@ hamburger-menu@^0.6.2:
   resolved "https://registry.yarnpkg.com/hamburger-menu/-/hamburger-menu-0.6.2.tgz#e6264bf2aa9fb7688850825aba5807f9c68dde88"
   integrity sha512-vLUuVLY1pjGcC/aG0Cfah51Dr9G73ia2Ygc56c+isHEk9H8bmz2j7MAgV8/Zf3lTzPDApIavc1tDx58ai+J26A==
 
+hamburger-react@^2.5.2:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/hamburger-react/-/hamburger-react-2.5.2.tgz#6224277593a03904b315d32a18a5fba0c04d8dc1"
+  integrity sha512-xsv/I7wQX1RDaulDnvMVCXMMRXnkwnUnkE8seD5eNVZJ4nIrjtK5LLA20l5x/pJ+mPWOzlFxW32VJ86Gbo2Njw==
+
 has-bigints@^1.0.2:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/has-bigints/-/has-bigints-1.1.0.tgz#28607e965ac967e03cd2a2c70a2636a1edad49fe"
