@@ -21,7 +21,7 @@ function SignUpPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Socials />
+          <Socials type="signup" />
           <RegisterForm />
           <div className="text-center text-sm mt-4">
             Already have an account?{' '}

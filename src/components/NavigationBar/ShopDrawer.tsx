@@ -4,11 +4,11 @@ import React, { memo } from 'react';
 import LinkUnderlined from '../shared/Animated/LinkUnderlined';
 import { Sheet, SheetContent } from '../ui/sheet';
 import { ChevronLeft } from 'lucide-react';
-import { TCategoryWithSubCategories } from '@/types/Category';
+import { TCategoryForSidebar } from '@/types/Category';
 import Image from 'next/image';
 
 interface ShopDrawerProps {
-  categories: TCategoryWithSubCategories[];
+  categories: TCategoryForSidebar[];
   activeSubmenu: 'shop' | 'collections' | null;
   setActiveSubmenu: (submenu: 'shop' | 'collections' | null) => void;
 }

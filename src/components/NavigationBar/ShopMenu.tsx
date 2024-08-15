@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
 import React from 'react';
-import { CategoryWithSubCategories } from '@/types/Category';
+import { TCategoryForSidebar } from '@/types/Category';
 import LinkUnderlined from '../shared/Animated/LinkUnderlined';
 import Container from '@/components/shared/ui/Container';
 import { containerVariants, itemVariants } from '../shared/ui/Navbar';
 
 interface ShopMenuProps {
-  categories: CategoryWithSubCategories[];
+  categories: TCategoryForSidebar[];
   setIsShopOpen: (isOpen: boolean) => void;
 }
 

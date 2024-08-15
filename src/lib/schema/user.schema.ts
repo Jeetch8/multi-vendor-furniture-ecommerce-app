@@ -18,6 +18,7 @@ import { reviews } from './review.schema';
 import { favorites } from './favorites.schema';
 import { carts } from './cart.schema';
 import { searchHistory } from './searchHistory.schema';
+import type { AdapterAccountType } from 'next-auth/adapters';
 
 export const userRoleEnum = pgEnum('user_role', [
   'ADMIN',
@@ -65,6 +66,7 @@ export const accounts = pgTable(
     userId: text('userId')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
+    type: text('type').$type<AdapterAccountType>().notNull(),
     provider: text('provider').notNull(),
     providerAccountId: text('providerAccountId').notNull(),
     refresh_token: text('refresh_token'),
@@ -93,9 +95,6 @@ export const sessions = pgTable('session', {
 export const verificationTokens = pgTable(
   'verificationToken',
   {
-    id: text('id')
-      .primaryKey()
-      .$defaultFn(() => createId()),
     identifier: text('identifier').notNull(),
     token: text('token').notNull(),
     expires: timestamp('expires', { mode: 'date' }).notNull(),
@@ -103,6 +102,27 @@ export const verificationTokens = pgTable(
   (verificationToken) => ({
     compositePk: primaryKey({
       columns: [verificationToken.identifier, verificationToken.token],
+    }),
+  })
+);
+
+export const authenticators = pgTable(
+  'authenticator',
+  {
+    credentialID: text('credentialID').notNull().unique(),
+    userId: text('userId')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    providerAccountId: text('providerAccountId').notNull(),
+    credentialPublicKey: text('credentialPublicKey').notNull(),
+    counter: integer('counter').notNull(),
+    credentialDeviceType: text('credentialDeviceType').notNull(),
+    credentialBackedUp: boolean('credentialBackedUp').notNull(),
+    transports: text('transports'),
+  },
+  (authenticator) => ({
+    compositePK: primaryKey({
+      columns: [authenticator.userId, authenticator.credentialID],
     }),
   })
 );

@@ -79,20 +79,22 @@ export const getVerificationTokenByEMail = async (email: string) => {
 
 export const generateVerificationToken = async (email: string) => {
   const token = createId();
-  const expires = new Date(new Date().getTime() + 3600 * 1000); // expires in 1 hour
+  const expires = new Date(new Date().getTime() + 3600 * 1000);
 
   const existingToken = await getVerificationTokenByEMail(email);
 
   if (existingToken) {
     await db
       .delete(schema.verificationTokens)
-      .where(eq(schema.verificationTokens.id, existingToken.id));
+      .where(
+        eq(schema.verificationTokens.identifier, existingToken.identifier)
+      );
   }
 
   const verificationToken = await db
     .insert(schema.verificationTokens)
     .values({
-      email,
+      identifier: email,
       token,
       expires,
     })

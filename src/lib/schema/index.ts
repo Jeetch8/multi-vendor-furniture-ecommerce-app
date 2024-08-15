@@ -61,6 +61,7 @@ import {
   twoFactorConfirmations,
   twoFactorConfirmationsRelations,
   twoFactorTokens,
+  authenticators,
 } from './user.schema';
 import { storeRelations, stores } from './store.schema';
 import { coupons, couponsRelations } from './coupon.schema';
@@ -71,6 +72,7 @@ import {
   collectionsToProductsMapRelations,
 } from './collection.schema';
 
+export type TAuthenticator = typeof authenticators.$inferSelect;
 export type TSession = typeof sessions.$inferSelect;
 export type TFavorite = typeof favorites.$inferSelect;
 export type TCartItem = typeof cartItems.$inferSelect;
@@ -114,6 +116,7 @@ export {
   collectionsRelations,
   collectionsToProductsMap,
   collectionsToProductsMapRelations,
+  authenticators,
   favorites,
   favoritesRelations,
   productAttributesRelations,

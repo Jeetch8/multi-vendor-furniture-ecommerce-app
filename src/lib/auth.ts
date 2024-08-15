@@ -1,7 +1,7 @@
+import authConfig from '@/config/auth.config';
 import type { TStore } from '@/lib/schema';
 import NextAuth, { type DefaultSession } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
-import { authOptions } from '@/config/auth.config';
 
 type ExtendedUser = DefaultSession['user'] & {
   role: 'ADMIN' | 'USER' | 'STORE_OWNER';
@@ -25,4 +25,4 @@ declare module 'next-auth/jwt' {
   }
 }
 
-export const { auth, handlers, signIn, signOut } = NextAuth(authOptions);
+export const { auth, handlers, signIn, signOut } = NextAuth(authConfig);
