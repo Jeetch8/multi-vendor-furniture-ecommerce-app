@@ -77,6 +77,27 @@ body {
   }
 }
 
+@layer utilities {
+  .no-scroll-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scroll-bar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .infinite-carousel-container {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 10%,
+      black 90%,
+      transparent
+    );
+  }
+}
+
 .hover-underline-animation {
   display: inline-block;
   position: relative;
