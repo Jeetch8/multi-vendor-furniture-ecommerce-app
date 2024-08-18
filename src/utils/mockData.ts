@@ -1,8 +1,10 @@
+import { TCategoryForSidebar } from '@/types/Category';
 import img1 from '../../public/furniture-environment/image1.webp';
 import img2 from '../../public/furniture-environment/image2.webp';
 import img3 from '../../public/furniture-environment/image3.webp';
 import img4 from '../../public/furniture-environment/image4.webp';
 import img5 from '../../public/furniture-environment/image5.webp';
+import { TCollection } from '@/lib/schema';
 
 export const navbarCategories = [
   {
@@ -125,7 +127,7 @@ export const navbarCategories = [
       { name: 'Nursery', slug: 'nursery' },
     ],
   },
-] as unknown as TCategoryWithSubCategories[];
+] as unknown as TCategoryForSidebar[];
 
 export const navbarCollections = [
   { name: 'Sofa Collections', slug: 'sofa-collections', image: img1 },

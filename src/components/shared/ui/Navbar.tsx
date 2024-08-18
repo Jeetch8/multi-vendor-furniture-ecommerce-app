@@ -5,20 +5,18 @@ import LinkUnderlined from '../Animated/LinkUnderlined';
 import Container from './Container';
 import { LuShoppingBag, LuSearch } from 'react-icons/lu';
 import { AnimatePresence } from 'motion/react';
+import SearchDrawer from '@/components/main/NavigationBar/SearchDrawer';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { ChevronRight } from 'lucide-react';
 import Hamburger from 'hamburger-react';
+import ShopDrawer from '@/components/main/NavigationBar/ShopDrawer';
+import CollectionsDrawer from '@/components/main/NavigationBar/CollectionsDrawer';
+import ShopMenu from '@/components/main/NavigationBar/ShopMenu';
+import CollectionMenu from '@/components/main/NavigationBar/CollectionMenu';
+import UserDisplay from '@/components/main/NavigationBar/UserDisplay';
 import { useSession } from 'next-auth/react';
 import Logo from './Logo';
-import { navbarCollections, navbarCategories } from '@/utils/mockData';
-import {
-  SearchDrawer,
-  CollectionMenu,
-  CollectionsDrawer,
-  ShopDrawer,
-  ShopMenu,
-  UserDisplay,
-} from '@/components/main/NavigationBar';
+import { navbarCategories, navbarCollections } from '@/utils/mockData';
 
 export const containerVariants = {
   hidden: { opacity: 0 },
@@ -50,8 +48,8 @@ export const itemVariants = {
 const Navbar = () => {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isCollectionsOpen, setIsCollectionsOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState<
     'shop' | 'collections' | null
   >(null);
@@ -80,7 +78,12 @@ const Navbar = () => {
               </div>
               <div className="flex items-center gap-1">
                 <LuSearch size={20} />
-                <button className="hover-underline-animation">SEARCH</button>
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  className="hover-underline-animation"
+                >
+                  SEARCH
+                </button>
               </div>
               <UserDisplay />
               <div className="flex items-center gap-1">
