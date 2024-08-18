@@ -1,11 +1,11 @@
 'use client';
 
 import React, { memo } from 'react';
-import LinkUnderlined from '../shared/Animated/LinkUnderlined';
-import { Sheet, SheetContent } from '../ui/sheet';
 import { ChevronLeft } from 'lucide-react';
 import { TCategoryForSidebar } from '@/types/Category';
 import Image from 'next/image';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import LinkUnderlined from '@/components/shared/Animated/LinkUnderlined';
 
 interface ShopDrawerProps {
   categories: TCategoryForSidebar[];

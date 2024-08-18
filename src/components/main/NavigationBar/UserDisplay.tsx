@@ -4,10 +4,10 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { LuUser } from 'react-icons/lu';
-import LinkUnderlined from '../shared/Animated/LinkUnderlined';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { signOut } from 'next-auth/react';
+import LinkUnderlined from '@/components/shared/Animated/LinkUnderlined';
 
 const UserDisplay = () => {
   const user = useCurrentUser();

@@ -1,11 +1,11 @@
 'use client';
 
 import React, { memo } from 'react';
-import LinkUnderlined from '../shared/Animated/LinkUnderlined';
-import { Sheet, SheetContent } from '../ui/sheet';
 import { ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
 import { TCollection } from '@/lib/schema';
+import LinkUnderlined from '@/components/shared/Animated/LinkUnderlined';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 
 interface CollectionsDrawerProps {
   collections: TCollection[];

@@ -18,7 +18,7 @@ import {
   ShopDrawer,
   ShopMenu,
   UserDisplay,
-} from '@/components/NavigationBar';
+} from '@/components/main/NavigationBar';
 
 export const containerVariants = {
   hidden: { opacity: 0 },

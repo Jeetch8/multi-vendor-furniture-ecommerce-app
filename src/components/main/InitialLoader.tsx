@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import PreLoaderImg from '../../../../public/loader-image.png';
+import PreLoaderImg from '../../../public/loader-image.png';
 import Image from 'next/image';
 
 import React, { useEffect } from 'react';

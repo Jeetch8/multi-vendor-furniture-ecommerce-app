@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import React from 'react';
 import { TCategoryForSidebar } from '@/types/Category';
-import LinkUnderlined from '../shared/Animated/LinkUnderlined';
 import Container from '@/components/shared/ui/Container';
-import { containerVariants, itemVariants } from '../shared/ui/Navbar';
+import LinkUnderlined from '@/components/shared/Animated/LinkUnderlined';
+import { containerVariants, itemVariants } from '@/components/shared/ui/Navbar';
 
 interface ShopMenuProps {
   categories: TCategoryForSidebar[];

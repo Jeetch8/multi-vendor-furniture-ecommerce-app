@@ -1,8 +1,8 @@
-import img1 from '../../../../public/furniture-environment/image1.webp';
-import img2 from '../../../../public/furniture-environment/image2.webp';
-import img3 from '../../../../public/furniture-environment/image3.webp';
-import img4 from '../../../../public/furniture-environment/image4.webp';
-import img5 from '../../../../public/furniture-environment/image5.webp';
+import img1 from '../../public/furniture-environment/image1.webp';
+import img2 from '../../public/furniture-environment/image2.webp';
+import img3 from '../../public/furniture-environment/image3.webp';
+import img4 from '../../public/furniture-environment/image4.webp';
+import img5 from '../../public/furniture-environment/image5.webp';
 
 export const navbarCategories = [
   {

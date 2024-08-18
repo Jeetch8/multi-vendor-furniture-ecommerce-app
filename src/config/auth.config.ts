@@ -1,5 +1,5 @@
 import type { AuthConfig } from '@auth/core';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import Credentials from 'next-auth/providers/credentials';
 import Github from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
