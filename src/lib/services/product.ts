@@ -1,11 +1,11 @@
 import { db } from '../db';
 import { count, eq, gte, ilike, inArray, lte, or } from 'drizzle-orm';
 import { categories, productAttributes, products } from '../schema';
-import { TProductForList } from '@/types/Product';
+import { TProductsForList } from '@/types/Product';
 
 export async function fetchProductsForList(
   searchParamsObj: Record<string, string>
-): Promise<TProductForList | null> {
+): Promise<TProductsForList | null> {
   const {
     searchQuery,
     minPrice,
@@ -181,7 +181,6 @@ export async function fetchProductsForList(
       .from(products)
       .where(or(eq(products.status, true), ...productsWhereArr))
       .then((result) => result[0].count);
-
     return {
       categoriesForSidebar: Array.from(categoriesForSidebar),
       availableAttributes: availableAttributesObj,

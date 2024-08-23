@@ -1,64 +1,109 @@
 import 'dotenv/config';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Client } from 'pg';
+import { drizzle } from 'drizzle-orm/neon-http';
 import { faker } from '@faker-js/faker';
-import { hash } from 'bcrypt';
-import * as schema from '../src/lib/schema';
+import { hash } from 'bcryptjs';
+import * as schema from '@/lib/schema/index';
 import { createId } from '@paralleldrive/cuid2';
+import { join } from 'path';
+import { TUnsplashResponse } from './types';
+import fs from 'fs';
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL!,
-  ssl: false,
-});
-
-const db = drizzle(client, { schema });
+const db = drizzle(process.env.DATABASE_URL!, { schema });
 
 const categoriesArr = [
-  'Electronics',
-  'Clothing',
-  'Home & Garden',
-  'Toys & Games',
-  'Sports & Outdoors',
-  'Books & Media',
-  'Beauty & Personal Care',
-  'Automotive',
-  'Health & Wellness',
-  'Jewelry & Watches',
+  'electronics',
+  'clothing',
+  'home-garden',
+  'toys-games',
+  'sports-outdoors',
+  'books-media',
+  'beauty-personal-care',
+  'automotive',
+  'health-wellness',
+  'jewelry-watches',
 ];
 const categoryAttributesArr = [
-  'Color',
-  'Size',
-  'Material',
-  'Style',
-  'Brand',
-  'RAM',
-  'Storage',
-  'Processor',
-  'Battery',
-  'Camera',
+  'color',
+  'size',
+  'material',
+  'style',
+  'brand',
+  'ram',
+  'storage',
+  'processor',
+  'battery',
+  'camera',
 ];
 const productAttributesArr = {
-  Color: ['Red', 'Blue', 'Green', 'Yellow', 'Purple'],
-  Size: ['Small', 'Medium', 'Large', 'X-Large', 'XX-Large'],
-  Material: ['Cotton', 'Polyester', 'Silk', 'Leather', 'Nylon'],
-  Style: ['Casual', 'Formal', 'Sporty', 'Boho', 'Preppy'],
-  Brand: ['Nike', 'Adidas', 'Puma', 'Under Armour', 'New Balance'],
-  RAM: ['4GB', '8GB', '16GB', '32GB', '64GB'],
-  Storage: ['128GB', '256GB', '512GB', '1TB', '2TB'],
-  Processor: [
-    'Intel Core i3',
-    'Intel Core i5',
-    'Intel Core i7',
-    'AMD Ryzen 3',
-    'AMD Ryzen 5',
-    'AMD Ryzen 7',
+  color: ['red', 'blue', 'green', 'yellow', 'purple'],
+  size: ['small', 'medium', 'large', 'x-large', 'xx-large'],
+  material: ['cotton', 'polyester', 'silk', 'leather', 'nylon'],
+  style: ['casual', 'formal', 'sporty', 'boho', 'preppy'],
+  brand: ['nike', 'adidas', 'puma', 'under armour', 'new balance'],
+  ram: ['4GB', '8GB', '16GB', '32GB', '64GB'],
+  storage: ['128GB', '256GB', '512GB', '1TB', '2TB'],
+  processor: [
+    'intel core i3',
+    'intel core i5',
+    'intel core i7',
+    'amd ryzen 3',
+    'amd ryzen 5',
+    'amd ryzen 7',
   ],
-  Battery: ['3000mAh', '4000mAh', '5000mAh', '6000mAh', '7000mAh'],
-  Camera: ['12MP', '16MP', '24MP', '48MP', '108MP'],
+  battery: ['3000mAh', '4000mAh', '5000mAh', '6000mAh', '7000mAh'],
+  camera: ['12MP', '16MP', '24MP', '48MP', '108MP'],
 };
 
 const randomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+const fetchImagesFromUnsplash = async (page_no: number = 1) => {
+  try {
+    const res = await fetch(
+      `https://api.unsplash.com/search/photos?page=${page_no}&per_page=30&query=nature&client_id=UrgeI-BR8KCMwcVaLcmmcd130yqXAMBY9nEytB3EyHY`
+    );
+    const jsondata: TUnsplashResponse = await res.json();
+    return jsondata;
+  } catch (error) {
+    return null;
+  }
+};
+
+const getRandomImages = async (): Promise<TUnsplashResponse['results']> => {
+  const pathTofile = join(__dirname, 'seed_cached_data', 'unsplash-data.json');
+  const fileData = await fs.readFileSync(pathTofile, {
+    encoding: 'utf8',
+  });
+  if (fileData) {
+    const jsonFileData: TUnsplashResponse = JSON.parse(fileData);
+    return jsonFileData.results;
+  } else {
+    const data = await fetchImagesFromUnsplash();
+    if (!data) throw Error('Error fetching data from Unsplash');
+    fs.writeFileSync(pathTofile, JSON.stringify(data, null, 2));
+    return data.results;
+  }
+};
+
+const addRandomImagesToFile = async () => {
+  const pageCount = 10;
+  const pathTofile = join(__dirname, 'seed_cached_data', 'unsplash-data.json');
+
+  const existingData = JSON.parse(fs.readFileSync(pathTofile, 'utf8'));
+  let allResults = existingData.results || [];
+
+  for (let page = 2; page <= pageCount; page++) {
+    const data = await fetchImagesFromUnsplash(page);
+    if (data && data.results) {
+      allResults = [...allResults, ...data.results];
+    }
+    // Add delay to respect API rate limits
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+
+  const updatedData = { ...existingData, results: allResults };
+  fs.writeFileSync(pathTofile, JSON.stringify(updatedData, null, 2));
 };
 
 const generateReview = ({
@@ -67,16 +112,19 @@ const generateReview = ({
 }: {
   userId: string;
   productId: string;
-}) => {
+}): typeof schema.reviews.$inferSelect => {
   return {
+    id: createId(),
     comment: faker.lorem.sentence({ min: 7, max: 15 }),
     userId,
     productId,
     rating: faker.number.int({ min: 0, max: 5 }),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 };
 
-const generateUser = async () => {
+const generateUser = async (): Promise<typeof schema.users.$inferSelect> => {
   const password = await hash('password123', 10);
   return {
     id: createId(),
@@ -94,7 +142,7 @@ const generateUser = async () => {
   };
 };
 
-const generateStore = (userId: string) => {
+const generateStore = (userId: string): typeof schema.stores.$inferSelect => {
   const storeName = faker.company.name();
   return {
     id: createId(),
@@ -120,7 +168,7 @@ const generateCategory = ({
   category: string;
   discountId: string | null;
   parentId: string | null;
-}) => {
+}): typeof schema.categories.$inferSelect => {
   return {
     id: createId(),
     discountId,
@@ -135,25 +183,30 @@ const generateCategory = ({
   };
 };
 
-const generateCategoryAttribute = ({
+const generateAttributeCategory = ({
   name,
-  type = 'single-select',
+  type = 'string',
+  options,
 }: {
   name: string;
-  type: 'single-select' | 'multi-select';
-}) => {
+  type: 'string' | 'multi-select' | 'number';
+  options?: string;
+}): typeof schema.attributeCategory.$inferSelect => {
   return {
     id: createId(),
     name,
     type,
     required: type === 'multi-select',
-    options: null,
+    options: options ?? null,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
 };
 
-const generateProduct = (storeId: string, discountId: string | null = null) => {
+const generateProduct = (
+  storeId: string,
+  discountId: string | null = null
+): typeof schema.products.$inferSelect => {
   const name = faker.commerce.productName();
   return {
     id: createId(),
@@ -162,11 +215,29 @@ const generateProduct = (storeId: string, discountId: string | null = null) => {
     name,
     description: faker.commerce.productDescription(),
     summary: faker.commerce.productDescription().substring(0, 100),
-    price: parseFloat(faker.commerce.price()),
+    price: parseInt(faker.commerce.price()),
     stock: randomInt(0, 100),
     slug: faker.helpers.slugify(name).toLowerCase() + '-' + createId(),
-    status: faker.datatype.boolean(),
+    status: true,
     brand: faker.company.name(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+const generateDiscount = (
+  storeId: string
+): typeof schema.discounts.$inferSelect => {
+  return {
+    id: createId(),
+    storeId,
+    name: faker.commerce.productName(),
+    description: faker.commerce.productDescription(),
+    discountPercent: faker.number.int({ min: 10, max: 50 }),
+    active: true,
+    startDate: new Date(),
+    endDate: new Date(faker.date.future()),
+    image: faker.image.url(),
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -180,7 +251,7 @@ const generateProductAttribute = ({
   productId: string;
   attributeCategoryId: string;
   value: string;
-}) => {
+}): typeof schema.productAttributes.$inferSelect => {
   return {
     id: createId(),
     productId,
@@ -192,31 +263,27 @@ const generateProductAttribute = ({
 };
 
 const cleanDatabase = async () => {
+  await db.delete(schema.products);
+  await db.delete(schema.categories);
+  await db.delete(schema.discounts);
   await db.delete(schema.users);
   await db.delete(schema.stores);
-  await db.delete(schema.categories);
   await db.delete(schema.attributeCategory);
-  await db.delete(schema.products);
-  await db.delete(schema.productAttributes);
-  await db.delete(schema.categoryToProductMap);
   await db.delete(schema.categoryToAttributeCategoryMap);
-  await db.delete(schema.discounts);
+  await db.delete(schema.productAttributes);
+  await db.delete(schema.carts);
+  await db.delete(schema.cartItems);
+  await db.delete(schema.categoryToProductMap);
   await db.delete(schema.addresses);
-  await db.delete(schema.reviews);
-  await db.delete(schema.productImages);
+  await db.delete(schema.orders);
   await db.delete(schema.orderItems);
   await db.delete(schema.favorites);
 };
 
 const seed = async () => {
   try {
-    await client.connect();
-    console.log('Connected to database');
-
-    console.log('Clearing existing data...');
     await cleanDatabase();
 
-    console.log('Generating users...');
     const users: (typeof schema.users.$inferSelect)[] = [];
     for (let i = 0; i < 10; i++) {
       const user = await generateUser();
@@ -224,7 +291,6 @@ const seed = async () => {
       users.push(result[0]);
     }
 
-    console.log('Generating stores...');
     const stores: (typeof schema.stores.$inferSelect)[] = [];
     for (const user of users.slice(0, 5)) {
       const store = generateStore(user.id);
@@ -232,12 +298,22 @@ const seed = async () => {
       stores.push(result[0]);
     }
 
-    console.log('Generating categories...');
+    const discounts: (typeof schema.discounts.$inferSelect)[] = [];
+    for (const store of stores) {
+      const discount = generateDiscount(store.id);
+      const result = await db
+        .insert(schema.discounts)
+        .values(discount)
+        .returning();
+      discounts.push(result[0]);
+    }
+
     const categories: (typeof schema.categories.$inferSelect)[] = [];
-    for (const category of categoriesArr) {
+    for (let i = 0; i < categoriesArr.length; i++) {
+      const shouldUseDiscount = faker.datatype.boolean() && discounts[i]?.id;
       const categoryObj = generateCategory({
-        category,
-        discountId: null,
+        category: categoriesArr[i],
+        discountId: shouldUseDiscount ? discounts[i]?.id : null,
         parentId: null,
       });
       const result = await db
@@ -247,11 +323,12 @@ const seed = async () => {
       categories.push(result[0]);
     }
 
-    console.log('Generating products...');
+    const imagesArray = await getRandomImages();
     const products: (typeof schema.products.$inferSelect)[] = [];
-    for (const store of stores) {
-      for (let i = 0; i < 10; i++) {
-        const product = generateProduct(store.id);
+    let prevProdNumberOfImages = 0;
+    for (let i = 0; i < stores.length; i++) {
+      for (let k = 0; k < 10; k++) {
+        const product = generateProduct(stores[i].id);
         const result = await db
           .insert(schema.products)
           .values({
@@ -261,16 +338,24 @@ const seed = async () => {
           .returning();
         await db.insert(schema.categoryToProductMap).values({
           productId: result[0].id,
-          categoryId: categories[i].id,
+          categoryId: categories[k].id,
         });
-        for (let k = 0; k < faker.number.int({ min: 3, max: 5 }); k++) {
+        const numberOfImagesToGenerate = faker.number.int({ min: 3, max: 5 });
+        for (let k = 0; k < numberOfImagesToGenerate; k++) {
+          const randImgObj = imagesArray[k + prevProdNumberOfImages];
           await db.insert(schema.productImages).values({
-            productId: result[0].id,
-            url: faker.image.url(),
             sequence: k,
+            productId: result[0].id,
+            url: randImgObj.urls.full,
+            thumbUrl: randImgObj.urls.regular,
+            smUrl: randImgObj.urls.small,
             alt: faker.lorem.sentence(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
           });
         }
+        prevProdNumberOfImages =
+          prevProdNumberOfImages + numberOfImagesToGenerate;
         const tempReviews: any = [];
         for (let j = 0; j < faker.number.int({ min: 5, max: 10 }); j++) {
           tempReviews.push(
@@ -285,62 +370,59 @@ const seed = async () => {
       }
     }
 
-    console.log('Generating category attributes...');
-    const categoryAttributes: schema.TAttributeCategory[] = [];
-    for (let i = 0; i < 10; i++) {
-      const attributeType = faker.helpers.arrayElement([
-        'single-select',
-        'multi-select',
-      ]);
-      const attribute = generateCategoryAttribute({
-        name: categoryAttributesArr[i],
-        type: attributeType,
-      });
-      const result = await db
-        .insert(schema.attributeCategory)
-        .values(attribute)
-        .returning();
-      await db.insert(schema.categoryToAttributeCategoryMap).values({
-        categoryId: faker.helpers.arrayElement(categories).id,
-        attributeCategoryId: result[0].id,
-      });
-      const productAttrData: schema.TProductAttribute[] = [];
-      for (let j = 0; j < products.length; j++) {
-        let attributeValue: string = faker.helpers.arrayElement(
-          productAttributesArr[result[0].name]
-        );
+    for (let i = 0; i < products.length; i++) {
+      for (let j = 0; j < faker.number.int({ min: 2, max: 5 }); j++) {
+        const attributeType = faker.helpers.arrayElement([
+          'string',
+          'multi-select',
+          'number',
+        ]);
+        let selectableValues: string | undefined;
         if (attributeType === 'multi-select') {
-          attributeValue = faker.helpers
-            .arrayElements(
-              productAttributesArr[
-                result[0].name as keyof typeof productAttributesArr
-              ],
-
-              {
-                min: 2,
-                max: productAttributesArr[result[0].name].length,
-              }
-            )
-            .join(', ');
+          selectableValues =
+            productAttributesArr[
+              faker.helpers.arrayElement(
+                categoryAttributesArr
+              ) as keyof typeof productAttributesArr
+            ].join(', ');
         }
-        productAttrData.push(
+        const attributeCategory = (
+          await db
+            .insert(schema.attributeCategory)
+            .values(
+              generateAttributeCategory({
+                name: faker.helpers.arrayElement(categoryAttributesArr),
+                type: attributeType,
+              })
+            )
+            .returning()
+        )[0];
+        await db.insert(schema.categoryToAttributeCategoryMap).values({
+          categoryId: faker.helpers.arrayElement(categories).id,
+          attributeCategoryId: attributeCategory.id,
+        });
+        await db.insert(schema.productAttributes).values(
           generateProductAttribute({
-            productId: products[j].id,
-            attributeCategoryId: result[0].id,
-            value: attributeValue,
+            productId: products[i].id,
+            attributeCategoryId: attributeCategory.id,
+            value:
+              attributeType === 'multi-select'
+                ? selectableValues!
+                : faker.helpers.arrayElement(
+                    productAttributesArr[
+                      attributeCategory.name as keyof typeof productAttributesArr
+                    ]
+                  ),
           })
         );
       }
-      await db.insert(schema.productAttributes).values(productAttrData);
-      categoryAttributes.push(result[0]);
     }
-
-    console.log('Seeding completed successfully!');
   } catch (error) {
     console.error('Error seeding database:', error);
   } finally {
-    await client.end();
+    process.exit(0);
   }
 };
 
 seed();
+// addRandomImagesToFile();

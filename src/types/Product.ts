@@ -1,7 +1,7 @@
 import { TCategoryForSidebar } from './Category';
 import { InferQueryModel } from '@/utils/QueryTypesBuilder';
 
-export type TProductForList = {
+export type TProductsForList = {
   categoriesForSidebar: string[];
   availableAttributes: Record<string, string[]>;
   productsList: InferQueryModel<

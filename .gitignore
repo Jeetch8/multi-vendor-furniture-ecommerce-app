@@ -3,6 +3,7 @@
 db_data/
 .vscode/
 knowledge_base/
+prisma/
 seed_cached_data/ 
 
 # dependencies
