@@ -33,8 +33,6 @@ function ProductsPage() {
     priceRange,
   } = data ?? {};
 
-  console.log(data, 'data');
-
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
     params.set('minPrice', priceRange?.min?.toString() ?? '0');

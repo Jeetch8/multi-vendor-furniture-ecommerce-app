@@ -1,7 +1,13 @@
 import { db } from '../db';
-import { count, eq, gte, ilike, inArray, lte, or } from 'drizzle-orm';
-import { categories, productAttributes, products } from '../schema';
-import { TProductsForList } from '@/types/Product';
+import { and, count, eq, gte, ilike, inArray, lte, or } from 'drizzle-orm';
+import {
+  categories,
+  favorites,
+  productAttributes,
+  products,
+  stores,
+} from '../schema';
+import { TProductForShowPage, TProductsForList } from '@/types/Product';
 
 export async function fetchProductsForList(
   searchParamsObj: Record<string, string>
@@ -195,6 +201,118 @@ export async function fetchProductsForList(
     };
   } catch (error) {
     console.error('Error fetching products:', error);
+    return null;
+  }
+}
+
+export const fetchProductBySlug = async ({
+  productSlug,
+  userId,
+}: {
+  productSlug: string;
+  userId: string | undefined;
+}): Promise<TProductForShowPage | null> => {
+  try {
+    const productQr = await db.query.products.findFirst({
+      where: and(eq(products.slug, productSlug), eq(products.status, true)),
+      with: {
+        favorites: userId ? { where: eq(favorites.userId, userId) } : undefined,
+        images: true,
+        discount: true,
+        reviews: {
+          with: {
+            user: true,
+          },
+        },
+        store: true,
+        attributes: {
+          with: {
+            attributeCategory: true,
+          },
+        },
+        categoryToProducts: {
+          with: {
+            category: {
+              with: {
+                categoryToAttributeCategory: true,
+                discount: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return productQr ?? null;
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return null;
+  }
+};
+
+export const fetchAllProducts = async () => {
+  try {
+    const res = await db.query.products.findMany({
+      where: and(eq(products.status, true), eq(stores.isActive, true)),
+      with: {
+        images: true,
+        categoryToProducts: true,
+        favorites: true,
+        attributes: {
+          with: {
+            product: true,
+          },
+        },
+        discount: true,
+        reviews: true,
+        store: true,
+      },
+    });
+
+    return res;
+  } catch {
+    return null;
+  }
+};
+
+export async function fetchStoreRatingByProductSlug(
+  productSlug: string
+): Promise<number | null> {
+  try {
+    const productQr = await db.query.products.findFirst({
+      where: eq(products.slug, productSlug),
+      with: {
+        store: {
+          with: {
+            products: {
+              with: {
+                reviews: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!productQr) {
+      console.error(`Product with slug ${productSlug} not found`);
+      return null;
+    }
+
+    const allRatings = productQr.store.products.flatMap((product) =>
+      product.reviews.map((review) => review.rating)
+    );
+
+    if (allRatings.length === 0) {
+      return null;
+    }
+
+    const averageRating =
+      allRatings.reduce((sum, rating) => sum + Number(rating), 0) /
+      allRatings.length;
+
+    return Number((averageRating * 2).toFixed(2));
+  } catch (error) {
+    console.error('Error fetching store rating:', error);
     return null;
   }
 }

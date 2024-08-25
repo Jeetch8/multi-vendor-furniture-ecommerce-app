@@ -32,3 +32,35 @@ export type TProductsForList = {
     itemsPerPage: number;
   };
 };
+
+export type TProductForShowPage = InferQueryModel<
+  'products',
+  {
+    with: {
+      images: true;
+      favorites: true;
+      attributes: {
+        with: {
+          attributeCategory: true;
+        };
+      };
+      reviews: {
+        with: {
+          user: true;
+        };
+      };
+      store: true;
+      categoryToProducts: {
+        with: {
+          category: {
+            with: {
+              categoryToAttributeCategory: true;
+              discount: true;
+            };
+          };
+        };
+      };
+      discount: true;
+    };
+  }
+>;
