@@ -6,6 +6,8 @@ import {
   productAttributes,
   products,
   stores,
+  TProduct,
+  TProductImage,
 } from '../schema';
 import { TProductForShowPage, TProductsForList } from '@/types/Product';
 
@@ -315,4 +317,44 @@ export async function fetchStoreRatingByProductSlug(
     console.error('Error fetching store rating:', error);
     return null;
   }
+}
+
+export async function fetchSimilarProducts(productSlug: string) {
+  const productsQuery = await db.query.products.findFirst({
+    where: eq(products.slug, productSlug),
+    with: {
+      categoryToProducts: {
+        with: {
+          category: {
+            with: {
+              products: {
+                with: {
+                  product: {
+                    with: {
+                      images: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!productsQuery) {
+    return null;
+  }
+  const similarProductsArr: (TProduct & {
+    images: TProductImage[];
+  })[] = [];
+  productsQuery.categoryToProducts.category.products.forEach((products) => {
+    if (products.product.slug !== productSlug) {
+      similarProductsArr.push(products.product);
+    }
+  });
+
+  await new Promise((resolve) => setTimeout(resolve, 10000));
+
+  return similarProductsArr;
 }
