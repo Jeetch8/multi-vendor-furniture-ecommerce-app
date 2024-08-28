@@ -46,7 +46,6 @@ export default {
 
         if (!twoFactorConfirmation) return false;
 
-        // Delete the two factor confirmation
         await db
           .delete(twoFactorConfirmations)
           .where(eq(twoFactorConfirmations.id, twoFactorConfirmation.id));

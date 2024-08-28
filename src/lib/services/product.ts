@@ -9,11 +9,11 @@ import {
   TProduct,
   TProductImage,
 } from '../schema';
-import { TProductForShowPage, TProductsForList } from '@/types/Product';
+import { TProductForShowPage, TProductsForWithOptions } from '@/types/Product';
 
 export async function fetchProductsForList(
   searchParamsObj: Record<string, string>
-): Promise<TProductsForList | null> {
+): Promise<TProductsForWithOptions | null> {
   const {
     searchQuery,
     minPrice,
@@ -244,6 +244,7 @@ export const fetchProductBySlug = async ({
         },
       },
     });
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     return productQr ?? null;
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -353,8 +354,6 @@ export async function fetchSimilarProducts(productSlug: string) {
       similarProductsArr.push(products.product);
     }
   });
-
-  await new Promise((resolve) => setTimeout(resolve, 10000));
 
   return similarProductsArr;
 }

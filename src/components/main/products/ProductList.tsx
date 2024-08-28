@@ -1,14 +1,15 @@
 import ProductCardSkeleton from '@/components/shared/skeleton/ProductCardSkeleton';
 import ProductCard from '@/components/shared/ui/ProductCard';
 import ProductsPaginator from './ProductsPaginator';
-import { TProductsForList } from '@/types/Product';
+import { TProductsForWithOptions } from '@/types/Product';
+import ProductsListSkeleton from '@/components/shared/skeleton/ProductsListSkeleton';
 
 function ProductList({
   data,
   loading,
   error,
 }: {
-  data: TProductsForList | undefined;
+  data: TProductsForWithOptions | undefined;
   loading: boolean | undefined;
   error: Error | undefined;
 }) {
@@ -21,13 +22,7 @@ function ProductList({
   }
 
   if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 py-4">
-        {Array.from({ length: 12 }).map((_, index) => (
-          <ProductCardSkeleton key={index} />
-        ))}
-      </div>
-    );
+    return <ProductsListSkeleton />;
   }
 
   return (

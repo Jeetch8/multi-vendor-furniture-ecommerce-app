@@ -6,7 +6,7 @@ import SortBy from '@/components/main/products/SortBy';
 import FilterDrawer from '@/components/main/products/FilterDrawer';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import Container from '@/components/shared/ui/Container';
-import { TProductsForList } from '@/types/Product';
+import { TProductsForList, TProductsForWithOptions } from '@/types/Product';
 import useFetch from 'use-http';
 
 const sortOptions = [
@@ -21,17 +21,12 @@ function ProductsPage() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const { data, loading, error, get } = useFetch<TProductsForList>(
+  const { data, loading, error, get } = useFetch<TProductsForWithOptions>(
     `/api/products?${searchParams.toString()}`,
     [searchParams]
   );
 
-  const {
-    productsList,
-    categoriesForSidebar,
-    availableAttributes,
-    priceRange,
-  } = data ?? {};
+  const { categoriesForSidebar, availableAttributes, priceRange } = data ?? {};
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);

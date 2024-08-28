@@ -1,29 +1,10 @@
 import { TCategoryForSidebar } from './Category';
 import { InferQueryModel } from '@/utils/QueryTypesBuilder';
 
-export type TProductsForList = {
+export type TProductsForWithOptions = {
   categoriesForSidebar: string[];
   availableAttributes: Record<string, string[]>;
-  productsList: InferQueryModel<
-    'products',
-    {
-      with: {
-        images: true;
-        reviews: true;
-        store: true;
-        attributes: true;
-        categoryToProducts: {
-          with: {
-            category: {
-              with: {
-                discount: true;
-              };
-            };
-          };
-        };
-      };
-    }
-  >[];
+  productsList: TProductsForList[];
   priceRange: { min: number; max: number };
   productCount: number;
   pagination: {
@@ -32,6 +13,27 @@ export type TProductsForList = {
     itemsPerPage: number;
   };
 };
+
+export type TProductsForList = InferQueryModel<
+  'products',
+  {
+    with: {
+      images: true;
+      reviews: true;
+      store: true;
+      attributes: true;
+      categoryToProducts: {
+        with: {
+          category: {
+            with: {
+              discount: true;
+            };
+          };
+        };
+      };
+    };
+  }
+>;
 
 export type TProductForShowPage = InferQueryModel<
   'products',

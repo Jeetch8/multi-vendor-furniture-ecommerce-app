@@ -1,0 +1,11 @@
+export const home = '/';
+export const productShow = (slug: string) => `/product/${slug}`;
+export const productsTable = '/store/products';
+export const discountsShow = '/store/discounts';
+export const productsList = '/products';
+export const productsListByCategory = (slug: string) => `/c/${slug}`;
+export const categoriesList = '/dashboard/categories';
+export const myAddresses = '/account/addresses';
+export const myReviews = '/account/reviews';
+export const myAccountSettings = '/account/accountsettings';
+export const cart = '/cart';

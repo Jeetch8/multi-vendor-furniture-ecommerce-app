@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
 import StickyImageScroll from './StickyImageScroll';
 import { teko } from '@/lib/fonts';
 import ProductDetailsAccordion from './ProductDetailsAccordion';
@@ -19,6 +18,8 @@ import {
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { IoMdHeart } from 'react-icons/io';
+import { toggleFavorite } from '@/actions/favorites';
+import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
 type ProductProps = {
@@ -33,7 +34,6 @@ function ProductShow({ product, storeRating }: ProductProps) {
   >([]);
   const session = useSession();
   const user = session?.data?.user;
-  const router = useRouter();
   const [isFavorite, setIsFavorite] = useState(false);
   const [selectableProductAttributes, setSelectableProductAttributes] =
     useState<
@@ -42,6 +42,7 @@ function ProductShow({ product, storeRating }: ProductProps) {
         val: string[];
       }[]
     >([]);
+  const router = useRouter();
 
   useEffect(() => {
     const tempObj: { [key: string]: Set<string> } = {};
@@ -89,9 +90,31 @@ function ProductShow({ product, storeRating }: ProductProps) {
     }
   }, [user, product?.favorites]);
 
-  const handleToggleFavorite = () => {
-    console.log('toggle favorite');
-  };
+  const handleToggleFavorite = useCallback(async () => {
+    if (!user) {
+      router.push('/signin');
+      return;
+    }
+
+    const newFavoriteState = !isFavorite;
+    setIsFavorite(newFavoriteState);
+
+    try {
+      const result = await toggleFavorite({
+        productId: product?.id!,
+        productSlug: product?.slug!,
+      });
+      if (result.error) {
+        setIsFavorite(!newFavoriteState);
+        toast.error(result.error);
+      } else if (result.success) {
+        toast.success(result.success);
+      }
+    } catch (error) {
+      setIsFavorite(!newFavoriteState);
+      toast.error('An unexpected error occurred');
+    }
+  }, [user, router, isFavorite]);
 
   const handleAddToCart = () => {
     console.log('add to cart');
