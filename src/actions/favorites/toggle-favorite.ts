@@ -5,7 +5,7 @@ import { auth } from '@/lib/auth';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { and, eq } from 'drizzle-orm';
 import { favorites } from '@/lib/schema';
-import { productShow } from '@/utils/paths';
+import { productShowPath } from '@/utils/paths';
 
 export default async function toggleFavorite({
   productId,
@@ -36,7 +36,7 @@ export default async function toggleFavorite({
       });
     }
 
-    revalidatePath(productShow(productSlug));
+    revalidatePath(productShowPath(productSlug));
     revalidateTag('favorites');
 
     return { success: 'Favorite status updated successfully.' };

@@ -20,8 +20,11 @@ export default {
   session: { strategy: 'jwt' },
   secret: process.env.AUTH_SECRET,
   pages: {
-    signIn: '/auth/login',
+    signIn: '/auth/signin',
     error: '/auth/error',
+    newUser: '/auth/signup',
+    verifyRequest: '/auth/verify-request',
+    signOut: '/auth/signout',
   },
   events: {
     async linkAccount({ user }) {
@@ -31,9 +34,9 @@ export default {
         .where(eq(users.id, user.id!));
     },
   },
+
   callbacks: {
     async signIn({ user, account }) {
-      // For OAuth providers
       if (account?.provider !== 'credentials') return true;
 
       const existingUser = await getUserById(user.id ?? '');

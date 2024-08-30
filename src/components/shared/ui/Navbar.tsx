@@ -17,6 +17,7 @@ import UserDisplay from '@/components/main/NavigationBar/UserDisplay';
 import { useSession } from 'next-auth/react';
 import Logo from './Logo';
 import { navbarCategories, navbarCollections } from '@/utils/mockData';
+import CartDrawer from '@/components/main/NavigationBar/CartDrawer';
 
 export const containerVariants = {
   hidden: { opacity: 0 },
@@ -53,6 +54,7 @@ const Navbar = () => {
   const [activeSubmenu, setActiveSubmenu] = useState<
     'shop' | 'collections' | null
   >(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const session = useSession();
   const user = session?.data?.user;
 
@@ -88,7 +90,12 @@ const Navbar = () => {
               <UserDisplay />
               <div className="flex items-center gap-1">
                 <LuShoppingBag size={20} />
-                <button className="hover-underline-animation">CART</button>
+                <button
+                  onClick={() => setIsCartOpen(true)}
+                  className="hover-underline-animation"
+                >
+                  CART
+                </button>
               </div>
             </div>
             <div className="md:hidden">
@@ -181,6 +188,8 @@ const Navbar = () => {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
       />
+
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 };

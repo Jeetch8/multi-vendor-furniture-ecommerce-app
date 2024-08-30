@@ -31,16 +31,16 @@ export const users = pgTable('user', {
     .primaryKey()
     .$defaultFn(() => createId()),
   name: text('name').notNull(),
-  username: text('username').unique().notNull(),
+  username: text('username').unique(),
   email: text('email').unique().notNull(),
   banner_img: text('banner_img'),
   image: text('image'),
-  password: text('password').notNull(),
-  emailVerified: timestamp('emailVerified', { mode: 'date' }).notNull(),
-  isTwoFactorEnabled: boolean('is_two_factor_enabled').default(false).notNull(),
-  role: userRoleEnum('role').default('USER').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  password: text('password'),
+  emailVerified: timestamp('emailVerified', { mode: 'date' }),
+  isTwoFactorEnabled: boolean('is_two_factor_enabled').default(false),
+  role: userRoleEnum('role').default('USER'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 });
 
 export const usersRelations = relations(users, ({ many, one }) => ({

@@ -71,10 +71,7 @@ const login = async (
       existingUser.email
     );
 
-    await sendVerificationEmail(
-      verificationToken.email,
-      verificationToken.token
-    );
+    await sendVerificationEmail(existingUser.email, verificationToken.token);
     return { success: { message: 'Confirmation email sent!' } };
   }
 

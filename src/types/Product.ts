@@ -66,3 +66,21 @@ export type TProductForShowPage = InferQueryModel<
     };
   }
 >;
+
+export type TProductWithDiscounts = InferQueryModel<
+  'products',
+  {
+    with: {
+      discount: true;
+      categoryToProducts: {
+        with: {
+          category: {
+            with: {
+              discount: true;
+            };
+          };
+        };
+      };
+    };
+  }
+>;

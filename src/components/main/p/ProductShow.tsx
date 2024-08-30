@@ -21,6 +21,7 @@ import { IoMdHeart } from 'react-icons/io';
 import { toggleFavorite } from '@/actions/favorites';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { addToCart } from '@/actions/cart';
 
 type ProductProps = {
   product: TProductForShowPage;
@@ -115,9 +116,32 @@ function ProductShow({ product, storeRating }: ProductProps) {
       toast.error('An unexpected error occurred');
     }
   }, [user, router, isFavorite]);
+  const handleAddToCart = async () => {
+    if (!user) {
+      toast.error('You must be signed in to do this.');
+      return;
+    }
 
-  const handleAddToCart = () => {
-    console.log('add to cart');
+    toast.loading('Adding to cart...', { id: 'addToCart' });
+
+    try {
+      const res = await addToCart({
+        productId: product?.id as string,
+        options: selectedProductAttributes,
+        formState: {},
+      });
+
+      if (res.error) {
+        const errorMessage = res.error.message
+          ? Object.values(res.error.message)[0]?.[0]
+          : 'An unknown error occurred';
+        toast.error(errorMessage, { id: 'addToCart' });
+      } else if (res.success) {
+        toast.success(res.success.message as string, { id: 'addToCart' });
+      }
+    } catch (error) {
+      toast.error('Failed to add to cart', { id: 'addToCart' });
+    }
   };
 
   const images = useMemo(() => {

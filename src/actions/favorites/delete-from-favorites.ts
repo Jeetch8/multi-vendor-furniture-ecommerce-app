@@ -2,7 +2,7 @@
 
 import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
-import { productShow } from '@/utils/paths';
+import { productShowPath } from '@/utils/paths';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { eq } from 'drizzle-orm';
 import { favorites } from '@/lib/schema';
@@ -61,7 +61,7 @@ const deleteFromFavorites = async ({
   }
 
   revalidateTag('favorites');
-  revalidatePath(productShow(productSlug));
+  revalidatePath(productShowPath(productSlug));
 
   return {
     success: {

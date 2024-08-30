@@ -20,7 +20,7 @@ const newVerification = async (token: string) => {
     return { errors: { _form: ['Token has expired!'] } };
   }
 
-  const existingUser = await getUserByEmail(existingToken.email);
+  const existingUser = await getUserByEmail(existingToken.identifier);
 
   if (!existingUser) {
     return { errors: { _form: ['Email does not exist!'] } };
@@ -30,13 +30,13 @@ const newVerification = async (token: string) => {
     .update(schema.users)
     .set({
       emailVerified: new Date(),
-      email: existingToken.email,
+      email: existingToken.identifier,
     })
     .where(eq(schema.users.id, existingUser.id));
 
   await db
     .delete(schema.verificationTokens)
-    .where(eq(schema.verificationTokens.id, existingToken.id));
+    .where(eq(schema.verificationTokens.identifier, existingToken.identifier));
 
   return { success: { message: 'Email verified.' } };
 };
