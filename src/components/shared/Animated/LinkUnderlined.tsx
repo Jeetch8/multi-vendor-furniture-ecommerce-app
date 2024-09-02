@@ -2,23 +2,33 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import React from 'react';
 
-interface LinkUnderlinedProps extends React.ComponentProps<'a'> {
-  initial?: boolean;
+interface LinkUnderlinedProps {
+  initialUnderlined?: boolean;
+  className?: string;
+  href?: string;
+  children: React.ReactNode;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
-const LinkUnderlined = (props: LinkUnderlinedProps) => {
+const LinkUnderlined = ({
+  initialUnderlined,
+  className,
+  href,
+  children,
+  onClick,
+}: LinkUnderlinedProps) => {
   return (
     <Link
-      {...props}
-      href={props.href || '#'}
+      href={href || '#'}
       className={cn(
-        props.initial
+        initialUnderlined
           ? 'hover-underline-animation-initial'
           : 'hover-underline-animation',
-        props.className
+        className
       )}
+      onClick={onClick}
     >
-      {props.children}
+      {children}
     </Link>
   );
 };

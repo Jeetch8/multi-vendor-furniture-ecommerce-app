@@ -6,11 +6,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { motion } from 'framer-motion';
-import { fetchProductBySlug } from '@/lib/services/product';
+import { TProductForShowPage } from '@/types/Product';
 
 interface Props {
-  product: Awaited<ReturnType<typeof fetchProductBySlug>>;
+  product: TProductForShowPage;
 }
 
 const ProductDetailsAccordion = ({ product }: Props) => {

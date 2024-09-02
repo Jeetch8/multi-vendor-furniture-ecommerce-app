@@ -1,4 +1,6 @@
+import { TReview } from '@/lib/schema';
 import { TProductWithDiscounts } from '@/types/Product';
+import { format } from 'date-fns';
 
 export function getUrl() {
   if (process.env.NODE_ENV === 'production') {
@@ -58,4 +60,31 @@ export function calculatePriceWithDiscounts(
 
 export function roundToTwoDecimals(num: number) {
   return (Math.round((num + Number.EPSILON) * 100) / 100).toFixed(2);
+}
+
+export function formatDate(date: Date) {
+  return format(date, 'dd MMMM');
+}
+
+export function formatDateSecondary(date: Date) {
+  return format(date, 'dd.MM.yyyy EEEE HH:mm');
+}
+
+export function formatDateTertiary(date: Date) {
+  return format(date, 'MMM dd, yyyy');
+}
+
+export function capitalizeOnlyFirstLetter(str: string) {
+  if (str.length === 0) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLocaleLowerCase();
+}
+
+export function calculateTotalProductRating(productReviews: TReview[]) {
+  const rating =
+    productReviews?.reduce(
+      (sum: number, review) => (sum += Number(review.rating)),
+      0
+    ) / productReviews.length;
+
+  return rating;
 }
