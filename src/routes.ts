@@ -23,6 +23,12 @@ export const authRoutes = [
   'new-verification',
 ];
 
+export const apiAuthPrefix = '/api/auth';
+
+export const apiProductsRoute = '/api/stores';
+
+export const apiCategoriesRoute = '/api/categories';
+
 export const DEFAULT_LOGIN_REDIRECT = '/account';
 
 export const roleBasedRoutes: RoleBasedRoutes = {
