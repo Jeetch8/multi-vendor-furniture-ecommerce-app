@@ -88,3 +88,34 @@ export function calculateTotalProductRating(productReviews: TReview[]) {
 
   return rating;
 }
+
+export function findValidCoupons(
+  product: any,
+  couponCode: string
+): { productCoupon: TCoupon | null; categoryCoupons: TCoupon[] } | null {
+  let productCoupon: TCoupon | null = null;
+  let categoryCoupons: TCoupon[] = [];
+
+  productCoupon =
+    product.coupons.find(
+      (coupon: TCoupon) =>
+        coupon.code === couponCode &&
+        coupon.usesCount > 0 &&
+        discountCheckIfEnded(coupon.endDate)
+    ) || null;
+
+  categoryCoupons = product.categories
+    .flatMap((category: any) => category.category.coupons)
+    .filter(
+      (coupon: TCoupon) =>
+        coupon.code === couponCode &&
+        coupon.usesCount > 0 &&
+        discountCheckIfEnded(coupon.endDate)
+    );
+
+  if (!productCoupon && categoryCoupons.length === 0) {
+    return null;
+  }
+
+  return { productCoupon, categoryCoupons };
+}
