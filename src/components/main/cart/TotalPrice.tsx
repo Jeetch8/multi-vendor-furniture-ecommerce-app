@@ -130,7 +130,8 @@ function TotalPrice() {
           <Button
             el="anchor"
             href="/cart/checkout"
-            className="ml-auto w-72 text-center"
+            className="ml-auto w-72 text-center bg-primary text-secondary"
+            color="zinc"
           >
             Checkout
           </Button>

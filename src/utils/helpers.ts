@@ -1,10 +1,10 @@
-import { TReview } from '@/lib/schema';
+import { TCart, TCartItem, TCoupon, TReview } from '@/lib/schema';
 import { TProductWithDiscounts } from '@/types/Product';
 import { format } from 'date-fns';
 
 export function getUrl() {
   if (process.env.NODE_ENV === 'production') {
-    return 'https://www.priashop.com/';
+    return 'https://www.dwello.com/';
   } else {
     return 'http://localhost:3000';
   }
@@ -89,6 +89,13 @@ export function calculateTotalProductRating(productReviews: TReview[]) {
   return rating;
 }
 
+export function discountCheckIfEnded(endDate: Date | null) {
+  if (endDate === null) return false;
+  const currentDate = new Date();
+  const couponEndDate = new Date(endDate);
+  return couponEndDate >= currentDate;
+}
+
 export function findValidCoupons(
   product: any,
   couponCode: string
@@ -119,3 +126,14 @@ export function findValidCoupons(
 
   return { productCoupon, categoryCoupons };
 }
+
+export function convertToSubcurrency(amount: number, factor = 100): number {
+  return Math.round(amount * factor);
+}
+
+export const getUniqueStoreIds = (
+  cart: TCart & { cartItems: TCartItem[] }
+): string[] => {
+  const storeIds = cart?.cartItems.map((item) => item.productId);
+  return Array.from(new Set(storeIds));
+};

@@ -22,6 +22,7 @@ const colors: { [index: string]: string } = {
     'bg-transparent active:bg-gray-50 border border-orange-1 text-orange-1',
   orange: 'bg-orange-1 text-white active:bg-orange-400',
   white: 'bg-white active:bg-gray-100 text-gray-custom-1',
+  zinc: 'bg-primary text-secondary active:bg-primary',
 };
 
 function Button({
@@ -36,7 +37,7 @@ function Button({
       <Link
         {...(props as AnchorProps)}
         className={cn(
-          `rounded-md px-4 py-2 ${color ? colors[color] : colors['orange']}`,
+          `rounded-md px-4 py-2 ${color ? colors[color] : colors['zinc']}`,
           className
         )}
       >
@@ -49,7 +50,7 @@ function Button({
     <button
       {...(props as ButtonProps)}
       className={cn(
-        `rounded-md px-4 py-2 ${color ? colors[color] : colors['orange']}`,
+        `rounded-md px-4 py-2 ${color ? colors[color] : colors['zinc']}`,
         className
       )}
     >

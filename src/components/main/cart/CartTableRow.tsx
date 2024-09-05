@@ -100,23 +100,13 @@ function CartTableRow({ item }: CartTableRowType) {
         <ProductPriceDisplay product={item.product} />
       </TableCell>
       <TableCell>
-        <div className="flex w-16 items-center justify-center gap-2 rounded-md border bg-white px-5 py-1">
-          <input
-            className="max-w-full bg-transparent pl-1 outline-none"
-            type="number"
-            name="quantity"
-            defaultValue={item.quantity}
-            onChange={(e) => handleQuantityChange(Number(e.target.value))}
-          />
-          <div className="flex flex-col">
-            <button onClick={() => handleQuantityChange(quantity + 1)}>
-              <MdOutlineArrowDropUp className="h-4 w-4" />
-            </button>
-            <button onClick={() => handleQuantityChange(quantity - 1)}>
-              <MdOutlineArrowDropDown className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
+        <input
+          className="bg-transparent pl-1 outline-none w-[50px] h-[30px] bg-white"
+          type="number"
+          name="quantity"
+          defaultValue={item.quantity}
+          onChange={(e) => handleQuantityChange(Number(e.target.value))}
+        />
       </TableCell>
       <TableCell className="font-semibold">
         <ProductPriceDisplay
