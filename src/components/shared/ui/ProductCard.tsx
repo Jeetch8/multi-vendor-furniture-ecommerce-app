@@ -12,11 +12,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { memo } from 'react';
+import { TProductCard } from '@/types/Product';
 
 interface ProductCardProps {
-  product: TProduct & {
-    images: TProductImage[];
-  };
+  product: TProductCard;
   className?: string;
   imgClass?: string;
 }

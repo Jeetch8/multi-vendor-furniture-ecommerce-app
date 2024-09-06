@@ -84,3 +84,13 @@ export type TProductWithDiscounts = InferQueryModel<
     };
   }
 >;
+
+export type TProductCard = InferQueryModel<
+  'products',
+  {
+    with: {
+      images: true;
+      discount: true;
+    };
+  }
+>;
