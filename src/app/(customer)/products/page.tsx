@@ -17,8 +17,6 @@ const sortOptions = [
 ];
 
 function ProductsPage() {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const { data, loading, error, get } = useFetch<TProductsForWithOptions>(
@@ -27,14 +25,6 @@ function ProductsPage() {
   );
 
   const { categoriesForSidebar, availableAttributes, priceRange } = data ?? {};
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    params.set('minPrice', priceRange?.min?.toString() ?? '0');
-    params.set('maxPrice', priceRange?.max?.toString() ?? '10000');
-    router.push(`${pathname}?${params.toString()}`);
-    get(`/api/products?${params.toString()}`);
-  }, [priceRange, searchParams]);
 
   return (
     <Container className="px-6 md:px-0">

@@ -1,4 +1,3 @@
-import ProductCardSkeleton from '@/components/shared/skeleton/ProductCardSkeleton';
 import ProductCard from '@/components/shared/ui/ProductCard';
 import ProductsPaginator from './ProductsPaginator';
 import { TProductsForWithOptions } from '@/types/Product';
@@ -31,7 +30,7 @@ function ProductList({
         {data?.productsList?.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
-        {data?.productsList.length === 0 && (
+        {data?.productsList?.length === 0 && (
           <div className="col-span-full text-center py-10">
             <p className="text-gray-500">No products found</p>
           </div>

@@ -38,10 +38,10 @@ export async function fetchProductsForList(
       });
       categoryIds.push(...categoriesQr.map((c) => c.id));
     }
-    if (searchParamsObj.searchQuery) {
+    if (searchQuery) {
       productsWhereArr.push(
-        ilike(products.name, searchParamsObj.searchQuery),
-        ilike(products.brand, searchParamsObj.searchQuery)
+        ilike(products.name, searchQuery),
+        ilike(products.brand, searchQuery)
       );
     }
     if (minPrice || maxPrice) {
@@ -80,6 +80,7 @@ export async function fetchProductsForList(
         reviews: true,
         store: true,
         images: true,
+        discount: true,
         categoryToProducts: {
           with: {
             category: {

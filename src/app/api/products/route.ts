@@ -4,9 +4,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const searchParamsObj = Object.fromEntries(searchParams.entries());
   try {
-    const products = await fetchProductsForList({
-      ...searchParamsObj,
-    });
+    const products = await fetchProductsForList(searchParamsObj);
     if (!products) {
       return Response.json({ message: 'Products not found' }, { status: 404 });
     }

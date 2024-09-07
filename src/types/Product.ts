@@ -22,6 +22,7 @@ export type TProductsForList = InferQueryModel<
       reviews: true;
       store: true;
       attributes: true;
+      discount: true;
       categoryToProducts: {
         with: {
           category: {
@@ -91,6 +92,15 @@ export type TProductCard = InferQueryModel<
     with: {
       images: true;
       discount: true;
+      categoryToProducts: {
+        with: {
+          category: {
+            with: {
+              discount: true;
+            };
+          };
+        };
+      };
     };
   }
 >;

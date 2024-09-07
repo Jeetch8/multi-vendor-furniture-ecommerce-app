@@ -7,6 +7,10 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useFetch } from 'use-http';
+import { TProductCard } from '@/types/Product';
+import { Button } from '@/components/ui/button';
+import { calculatePriceWithDiscounts } from '@/utils/helpers';
 
 interface SearchDrawerProps {
   isOpen: boolean;
@@ -40,6 +44,9 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const router = useRouter();
+  const { get, loading, error, data } = useFetch<TProductCard[]>(
+    `/api/search?searchQuery=${searchTerm}`
+  );
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,13 +55,13 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
     setIsLoading(true);
     setHasSearched(true);
 
-    // Simulate search delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const res = await get();
+    console.log(res);
     setIsLoading(false);
   };
 
   const handleShowMore = () => {
-    router.push(`/search?query=${encodeURIComponent(searchTerm)}`);
+    router.push(`/products?searchQuery=${encodeURIComponent(searchTerm)}`);
     onClose();
   };
 
@@ -130,10 +137,10 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
             </div>
           )}
 
-          {hasSearched && !isLoading && (
+          {data && hasSearched && !isLoading && (
             <div className="mt-8 space-y-8">
               <div className="grid grid-cols-2 gap-4">
-                {categoryCards.slice(0, 4).map((product) => (
+                {data?.map((product: TProductCard) => (
                   <Link
                     key={product.slug}
                     href={`/product/${product.slug}`}
@@ -142,7 +149,7 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
                   >
                     <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
                       <Image
-                        src={product.image}
+                        src={product.images[0].url}
                         alt={product.name}
                         fill
                         className="object-cover transition-transform group-hover:scale-105"
@@ -150,18 +157,18 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
                     </div>
                     <div className="mt-2">
                       <h3 className="font-medium">{product.name}</h3>
-                      <p className="text-gray-500">$999</p>
+                      <p className="text-gray-500">
+                        ${calculatePriceWithDiscounts(product).finalPrice}
+                      </p>
                     </div>
                   </Link>
                 ))}
               </div>
-
-              <button
-                onClick={handleShowMore}
-                className="w-full py-3 text-center text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                Show more results
-              </button>
+              <div className="flex justify-center mt-6">
+                <Button onClick={handleShowMore} color="zinc">
+                  Show more results
+                </Button>
+              </div>
             </div>
           )}
         </div>
