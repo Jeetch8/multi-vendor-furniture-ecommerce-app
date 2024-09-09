@@ -1,16 +1,18 @@
+import authConfig from '@/config/auth.config';
 import NextAuth from 'next-auth';
-import authConfig from './config/auth.config';
-import { TUserRole } from './lib/schema';
 import {
+  DEFAULT_LOGIN_REDIRECT,
   apiAuthPrefix,
   apiCategoriesRoute,
   apiProductsRoute,
-  publicRoutes,
-  publicPrefixes,
+  apiSearch,
+  apiStripeRoute,
   authRoutes,
+  publicPrefixes,
+  publicRoutes,
   roleBasedRoutes,
-  DEFAULT_LOGIN_REDIRECT,
-} from './routes';
+} from '@/routes';
+import { TUserRole } from './lib/schema';
 
 const { auth } = NextAuth(authConfig);
 
@@ -22,6 +24,8 @@ export default auth((req): any => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isApiCategoriesRoute = nextUrl.pathname.startsWith(apiCategoriesRoute);
   const isApiProductRoute = nextUrl.pathname.startsWith(apiProductsRoute);
+  const isApiStripeRoute = nextUrl.pathname.startsWith(apiStripeRoute);
+  const isApiSearchRoute = nextUrl.pathname.startsWith(apiSearch);
 
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isPublicPrefix = publicPrefixes.some((prefix) =>
@@ -41,7 +45,9 @@ export default auth((req): any => {
   const isRouteExists =
     isApiAuthRoute ||
     isApiCategoriesRoute ||
+    isApiStripeRoute ||
     isApiProductRoute ||
+    isApiSearchRoute ||
     isPublicRoute ||
     isPublicPrefix ||
     isAuthRoute ||
@@ -51,7 +57,13 @@ export default auth((req): any => {
     return null;
   }
 
-  if (isApiAuthRoute || isApiProductRoute || isApiCategoriesRoute) {
+  if (
+    isApiAuthRoute ||
+    isApiProductRoute ||
+    isApiCategoriesRoute ||
+    isApiStripeRoute ||
+    isApiSearchRoute
+  ) {
     return null;
   }
 
@@ -79,6 +91,7 @@ export default auth((req): any => {
     );
   }
 
+  // role-based access
   if (isLoggedIn && userRole) {
     if (!isRouteAllowedForRole) {
       return Response.redirect(new URL('/signin', nextUrl));
@@ -89,5 +102,5 @@ export default auth((req): any => {
 });
 
 export const config = {
-  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
+  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'], // clerk
 };

@@ -29,6 +29,10 @@ export const apiProductsRoute = '/api/stores';
 
 export const apiCategoriesRoute = '/api/categories';
 
+export const apiStripeRoute = '/api/create-payment-intent';
+
+export const apiSearch = '/api/s';
+
 export const DEFAULT_LOGIN_REDIRECT = '/account';
 
 export const roleBasedRoutes: RoleBasedRoutes = {

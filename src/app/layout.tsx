@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import { SessionProvider } from 'next-auth/react';
+import TopLoader from 'nextjs-toploader';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -30,6 +31,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <TopLoader color="#000" />
+        {/* <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} /> */}
         <SessionProvider>{children}</SessionProvider>
         <Toaster
           position="bottom-right"

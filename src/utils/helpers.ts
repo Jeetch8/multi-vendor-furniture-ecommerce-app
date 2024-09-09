@@ -1,6 +1,7 @@
 import { TCart, TCartItem, TCoupon, TReview } from '@/lib/schema';
 import { TProductWithDiscounts } from '@/types/Product';
 import { format } from 'date-fns';
+import slugify from 'slugify';
 
 export function getUrl() {
   if (process.env.NODE_ENV === 'production') {
@@ -137,3 +138,11 @@ export const getUniqueStoreIds = (
   const storeIds = cart?.cartItems.map((item) => item.productId);
   return Array.from(new Set(storeIds));
 };
+
+export function generateSlug(str: string) {
+  return slugify(str, {
+    lower: true,
+    strict: true,
+    trim: true,
+  });
+}

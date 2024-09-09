@@ -16,7 +16,7 @@ const navLinks = [
   },
   {
     name: 'Account Settings',
-    href: '/account/accountsettings',
+    href: '/account/account-settings',
   },
 ];
 
