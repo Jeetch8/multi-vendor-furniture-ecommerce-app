@@ -1,7 +1,6 @@
 import Image from 'next/image';
 
 import Button from '@/components/shared/ui/Button';
-// import AccountImg from '/public/account-shop.jpg';
 import { auth } from '@/lib/auth';
 import AccountImg from '/public/undraw_posts.svg';
 

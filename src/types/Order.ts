@@ -6,11 +6,15 @@ export type TOrderForMyOrders = InferQueryModel<
     with: {
       orderToStores: {
         with: {
-          orderItems: {
+          order: {
             with: {
-              product: {
+              orderItems: {
                 with: {
-                  images: true;
+                  product: {
+                    with: {
+                      images: true;
+                    };
+                  };
                 };
               };
             };
@@ -18,6 +22,39 @@ export type TOrderForMyOrders = InferQueryModel<
           store: true;
           shippingAddress: true;
           shipment: true;
+        };
+      };
+    };
+  }
+>;
+
+// export type OrderWithDetails = TOrder & {
+//   user: UserBasic;
+//   orderStores: Array<
+//     TOrdersToStore & {
+//       shipment: TShipment;
+//       shippingAddress: TAddress;
+//       orderItems: Array<
+//         TOrderItem & {
+//           product: TProduct;
+//         }
+//       >;
+//     }
+//   >;
+// };
+
+export type TOrderWithDetails = InferQueryModel<
+  'ordersToStore',
+  {
+    with: {
+      order: {
+        with: {
+          user: true;
+          orderItems: {
+            with: {
+              product: true;
+            };
+          };
         };
       };
     };

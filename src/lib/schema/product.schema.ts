@@ -1,4 +1,10 @@
-import { integer, text, boolean, uniqueIndex } from 'drizzle-orm/pg-core';
+import {
+  integer,
+  text,
+  boolean,
+  uniqueIndex,
+  numeric,
+} from 'drizzle-orm/pg-core';
 import { pgTable, timestamp } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
 import { categories, orderItems, stores } from '../schema';
@@ -23,7 +29,7 @@ export const products = pgTable(
     name: text('name').notNull(),
     description: text('description').notNull(),
     summary: text('summary').notNull(),
-    price: integer('price').notNull(),
+    price: numeric('price', { scale: 2 }).notNull(),
     stock: integer('stock').notNull(),
     slug: text('product_slug').notNull(),
     status: boolean('status').default(false),

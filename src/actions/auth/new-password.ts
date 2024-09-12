@@ -1,7 +1,6 @@
 'use server';
 
-import bcrypt from 'bcrypt';
-
+import bcrypt from 'bcryptjs';
 import { db } from '@/lib/db';
 import { getPasswordResetTokenByToken } from '@/lib/services/token';
 import { getUserByEmail } from '@/lib/services/user';

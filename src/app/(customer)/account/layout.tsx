@@ -1,5 +1,5 @@
 import Container from '@/components/shared/ui/Container';
-import UserAccountNavigation from '@/components/main/account/UserAccountNavigation';
+import SecondaryTopNavigation from '@/components/main/account/SecondaryTopNavigation';
 
 const navLinks = [
   {
@@ -23,7 +23,7 @@ const navLinks = [
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div>
-      <UserAccountNavigation navItems={navLinks} />
+      <SecondaryTopNavigation navItems={navLinks} />
       <Container className="mt-11">{children}</Container>
     </div>
   );

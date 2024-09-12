@@ -1,6 +1,5 @@
 import React from 'react';
 import Navbar from '@/components/shared/ui/Navbar';
-import SessionProvider from '@/components/Providers/SessionProvider';
 import { CartProvider } from '@/Context/CartContext';
 import { auth } from '@/lib/auth';
 import { fetchCartByUser } from '@/lib/services/cart';

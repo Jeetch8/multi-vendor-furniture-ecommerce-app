@@ -1,5 +1,5 @@
 import { db } from '../db';
-import { and, count, eq, gte, ilike, inArray, lte, or } from 'drizzle-orm';
+import { and, count, eq, gte, ilike, inArray, lte, or, sql } from 'drizzle-orm';
 import {
   categories,
   favorites,
@@ -49,11 +49,11 @@ export async function fetchProductsForList(
       const maxPriceNum = Number(maxPrice);
 
       if (!isNaN(minPriceNum)) {
-        productsWhereArr.push(gte(products.price, minPriceNum));
+        productsWhereArr.push(gte(sql<number>`products.price`, minPriceNum));
       }
 
       if (!isNaN(maxPriceNum)) {
-        productsWhereArr.push(lte(products.price, maxPriceNum));
+        productsWhereArr.push(lte(sql<number>`products.price`, maxPriceNum));
       }
     }
 
@@ -142,11 +142,12 @@ export async function fetchProductsForList(
     const priceRange = { min: 0, max: 10000 };
     attributeQuery.forEach((product) => {
       productCount++;
-      if (product.price < priceRange.min) {
-        priceRange.min = product.price;
+      const productPrice = parseFloat(product.price);
+      if (productPrice < priceRange.min) {
+        priceRange.min = productPrice;
       }
-      if (product.price > priceRange.max) {
-        priceRange.max = product.price;
+      if (productPrice > priceRange.max) {
+        priceRange.max = productPrice;
       }
       const mapTable = product.categoryToProducts;
       if (mapTable.category.subCategories.length > 0) {

@@ -1,10 +1,32 @@
-import { avg, desc, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
+import {
+  and,
+  avg,
+  count,
+  countDistinct,
+  desc,
+  eq,
+  getTableColumns,
+  gte,
+  inArray,
+  sql,
+  sum,
+  sumDistinct,
+} from 'drizzle-orm';
 import { stores } from '../schema/store.schema';
 import { db } from '../db';
 import { TStoreForCheckout } from '@/types/Store';
 import { productImages, products } from '../schema/product.schema';
-import { discounts, favorites, orderItems, orders, reviews } from '../schema';
+import {
+  discounts,
+  favorites,
+  orderItems,
+  orders,
+  ordersToStore,
+  reviews,
+  users,
+} from '../schema';
 import { TProductCard } from '@/types/Product';
+import { subDays } from 'date-fns';
 
 export const getStoresByIds = async (
   storeIds: string[]
@@ -95,4 +117,48 @@ export const fetchStoreRatingByStore = async (storeId: string) => {
   }, 0);
 
   return { rating, ratingCount };
+};
+
+export const fetchStorePerformace = async (storeId: string) => {
+  const ordersQuery = await db
+    .select({
+      totalSales: sum(orders.totalPrice),
+      salesLastWeek: sum(
+        sql`case when ${sql`${
+          orders.createdAt
+        } > ${sql`now() - interval '7 days'`}`} then ${
+          orders.totalPrice
+        } else 0 end`
+      ),
+      totalOrders: count(orders.id),
+      ordersLastWeek: count(
+        sql`case when ${sql`${
+          orders.createdAt
+        } > ${sql`now() - interval '7 days'`}`} then 1 else 0 end`
+      ),
+      totalCustomers: countDistinct(orders.userId),
+      customersLastWeek: countDistinct(
+        sql`case when ${sql`${
+          orders.createdAt
+        } > ${sql`now() - interval '7 days'`}`} then 1 else 0 end`
+      ),
+    })
+    .from(ordersToStore)
+    .where(eq(ordersToStore.storeId, storeId))
+    .leftJoin(orders, eq(ordersToStore.orderId, orders.id));
+
+  const lastWeekPerformace = await db
+    .select({
+      totalSales: sum(orders.totalPrice),
+    })
+    .from(ordersToStore)
+    .where(
+      and(
+        eq(ordersToStore.storeId, storeId),
+        gte(orders.createdAt, subDays(new Date(), 7))
+      )
+    )
+    .leftJoin(orders, eq(ordersToStore.orderId, orders.id));
+
+  return ordersQuery;
 };

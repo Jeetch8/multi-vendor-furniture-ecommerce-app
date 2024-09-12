@@ -124,8 +124,10 @@ const generateReview = ({
   };
 };
 
-const generateUser = async (): Promise<typeof schema.users.$inferSelect> => {
-  const password = await hash('password123', 10);
+const generateUser = async (
+  role: 'ADMIN' | 'USER' | 'STORE_OWNER' = 'STORE_OWNER'
+): Promise<typeof schema.users.$inferSelect> => {
+  const password = await hash('PAssword!@12', 10);
   return {
     id: createId(),
     name: faker.person.fullName(),
@@ -135,8 +137,8 @@ const generateUser = async (): Promise<typeof schema.users.$inferSelect> => {
     banner_img: faker.image.url(),
     image: faker.image.avatar(),
     password,
-    isTwoFactorEnabled: faker.datatype.boolean(),
-    role: faker.helpers.arrayElement(['ADMIN', 'USER', 'STORE_OWNER']),
+    isTwoFactorEnabled: false,
+    role,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -215,7 +217,7 @@ const generateProduct = (
     name,
     description: faker.commerce.productDescription(),
     summary: faker.commerce.productDescription().substring(0, 100),
-    price: parseInt(faker.commerce.price()),
+    price: faker.commerce.price(),
     stock: randomInt(0, 100),
     slug: faker.helpers.slugify(name).toLowerCase() + '-' + createId(),
     status: true,
@@ -233,7 +235,7 @@ const generateDiscount = (
     storeId,
     name: faker.commerce.productName(),
     description: faker.commerce.productDescription(),
-    discountPercent: faker.number.int({ min: 10, max: 50 }),
+    discountPercent: faker.commerce.price({ min: 10, max: 50 }),
     active: true,
     startDate: new Date(),
     endDate: new Date(faker.date.future()),
@@ -262,11 +264,106 @@ const generateProductAttribute = ({
   };
 };
 
+const generateCarrier = (): typeof schema.carriers.$inferSelect => {
+  return {
+    id: createId(),
+    name: faker.company.name(),
+    code: createId(),
+    trackingUrl: faker.internet.url(),
+    logoUrl: faker.image.url(),
+    isActive: true,
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.past(),
+  };
+};
+
+const generateOrderItem = (
+  orderId: string,
+  productId: string,
+  ordersToStoreId: string
+): typeof schema.orderItems.$inferSelect => {
+  const arrayOfSelectedAttributes: { attName: string; val: string }[] = [];
+  for (let i = 0; i < faker.number.int({ min: 1, max: 5 }); i++) {
+    const attName = faker.helpers.arrayElement(categoryAttributesArr);
+    const val = faker.helpers.arrayElement(
+      productAttributesArr[attName as keyof typeof productAttributesArr]
+    );
+    arrayOfSelectedAttributes.push({ attName, val });
+  }
+  return {
+    id: createId(),
+    orderId,
+    ordersToStoreId,
+    productId,
+    quantity: faker.number.int({ min: 1, max: 10 }),
+    price: faker.commerce.price(),
+    selectedAttributes: arrayOfSelectedAttributes,
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.past(),
+  };
+};
+
+const generateOrder = (userId: string): typeof schema.orders.$inferSelect => {
+  return {
+    id: createId(),
+    userId,
+    couponId: null,
+    orderNo: createId(),
+    totalPrice: faker.commerce.price(),
+    orderStatus: faker.helpers.arrayElement(schema.orderStatusEnum.enumValues),
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.past(),
+  };
+};
+
+const generateAddress = (
+  userId: string
+): typeof schema.addresses.$inferSelect => {
+  return {
+    id: createId(),
+    userId,
+    title: faker.lorem.sentence(),
+    addressLine1: faker.location.streetAddress(),
+    addressLine2: faker.location.streetAddress(),
+    country: faker.location.country(),
+    city: faker.location.city(),
+    postalCode: faker.location.zipCode(),
+    landmark: faker.location.streetAddress(),
+    phoneNumber: faker.phone.number(),
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.past(),
+  };
+};
+
+const generateFavorite = (
+  userId: string,
+  products: (typeof schema.products.$inferSelect)[]
+): typeof schema.favorites.$inferSelect => {
+  return {
+    id: createId(),
+    userId,
+    productId: faker.helpers.arrayElement(products).id,
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.past(),
+  };
+};
+
+const getRotatingValuesOfArr = ({
+  arr,
+}: {
+  arr: any[];
+  functionToCall: Function;
+}) => {
+  if (typeof getRotatingValuesOfArr.prototype.counter === 'undefined') {
+    getRotatingValuesOfArr.prototype.counter = 0;
+  }
+  getRotatingValuesOfArr.prototype.counter++;
+};
+
 const cleanDatabase = async () => {
   await db.delete(schema.products);
   await db.delete(schema.categories);
   await db.delete(schema.discounts);
-  await db.delete(schema.users);
   await db.delete(schema.stores);
   await db.delete(schema.attributeCategory);
   await db.delete(schema.categoryToAttributeCategoryMap);
@@ -274,10 +371,19 @@ const cleanDatabase = async () => {
   await db.delete(schema.carts);
   await db.delete(schema.cartItems);
   await db.delete(schema.categoryToProductMap);
-  await db.delete(schema.addresses);
+  await db.delete(schema.ordersToStore);
   await db.delete(schema.orders);
   await db.delete(schema.orderItems);
+  await db.delete(schema.shippingRates);
+  await db.delete(schema.storeToCarriers);
+  await db.delete(schema.carriers);
   await db.delete(schema.favorites);
+  await db.delete(schema.addresses);
+  await db.delete(schema.users);
+  await db.delete(schema.authenticators);
+  await db.delete(schema.passwordResetTokens);
+  await db.delete(schema.twoFactorConfirmations);
+  await db.delete(schema.twoFactorTokens);
 };
 
 const seed = async () => {
@@ -285,17 +391,36 @@ const seed = async () => {
     await cleanDatabase();
 
     const users: (typeof schema.users.$inferSelect)[] = [];
+    const addresses: (typeof schema.addresses.$inferSelect)[] = [];
     for (let i = 0; i < 10; i++) {
       const user = await generateUser();
       const result = await db.insert(schema.users).values(user).returning();
+      const address = generateAddress(result[0].id);
+      const addressResult = await db
+        .insert(schema.addresses)
+        .values(address)
+        .returning();
+      addresses.push(addressResult[0]);
       users.push(result[0]);
     }
 
+    // Stores
     const stores: (typeof schema.stores.$inferSelect)[] = [];
     for (const user of users.slice(0, 5)) {
       const store = generateStore(user.id);
-      const result = await db.insert(schema.stores).values(store).returning();
-      stores.push(result[0]);
+      const storeResult = await db
+        .insert(schema.stores)
+        .values(store)
+        .returning();
+      const carrierResult = await db
+        .insert(schema.carriers)
+        .values(generateCarrier())
+        .returning();
+      stores.push(storeResult[0]);
+      await db.insert(schema.storeToCarriers).values({
+        storeId: storeResult[0].id,
+        carrierId: carrierResult[0].id,
+      });
     }
 
     const discounts: (typeof schema.discounts.$inferSelect)[] = [];
@@ -417,6 +542,51 @@ const seed = async () => {
         );
       }
     }
+
+    for (const user of users) {
+      await db
+        .insert(schema.favorites)
+        .values(generateFavorite(user.id, products))
+        .returning();
+    }
+
+    // orders and orderItems
+    for (let i = 0; i < users.length; i++) {
+      for (
+        let orderInd = 0;
+        orderInd < faker.number.int({ min: 5, max: 10 });
+        orderInd++
+      ) {
+        const order = generateOrder(users[i].id);
+        const orderResult = await db
+          .insert(schema.orders)
+          .values(order)
+          .returning();
+        const orderToStoreResult = await db
+          .insert(schema.ordersToStore)
+          .values({
+            orderId: orderResult[0].id,
+            storeId: faker.helpers.arrayElement(stores).id,
+            shippingAddressId: faker.helpers.arrayElement(addresses).id,
+          })
+          .returning();
+        const orderItems: (typeof schema.orderItems.$inferSelect)[] = [];
+        for (let j = 0; j < faker.number.int({ min: 1, max: 5 }); j++) {
+          orderItems.push(
+            generateOrderItem(
+              orderResult[0].id,
+              products[j].id,
+              orderToStoreResult[0].id
+            )
+          );
+        }
+        await db.insert(schema.orderItems).values(orderItems);
+      }
+
+      // adding admin user
+      await db.insert(schema.users).values(await generateUser('ADMIN'));
+    }
+    console.log(users[0]);
   } catch (error) {
     console.error('Error seeding database:', error);
   } finally {

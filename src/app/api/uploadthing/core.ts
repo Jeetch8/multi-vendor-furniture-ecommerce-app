@@ -1,8 +1,16 @@
-import { createUploadthing, type FileRouter } from 'uploadthing/next';
+import { createUploadthing, UTFiles, type FileRouter } from 'uploadthing/next';
 import { UploadThingError } from 'uploadthing/server';
 import { auth } from '@/lib/auth';
+import { createId } from '@paralleldrive/cuid2';
+import slugify from 'slugify';
 
 const f = createUploadthing();
+
+// f(['image']).middleware(async ({ req, files }) => {
+
+//   // Return userId to be used in onUploadComplete
+//   return { foo: 'bar' as const, [UTFiles]: fileOverrides };
+// });
 
 export const ourFileRouter = {
   imageUploader: f({
@@ -11,14 +19,19 @@ export const ourFileRouter = {
       maxFileCount: 2,
     },
   })
-    .middleware(async ({ req }) => {
+    .middleware(async ({ req, files }) => {
       const session = await auth();
       const user = session?.user;
 
       if (!user) throw new UploadThingError('Unauthorized');
 
-      console.log('user', user);
-      return { userId: user.id };
+      const fileOverrides = files.map((file) => {
+        const newName = slugify(file.name);
+        const myIdentifier = createId();
+        return { ...file, name: newName, customId: myIdentifier };
+      });
+
+      return { userId: user.id, [UTFiles]: fileOverrides };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log('Upload complete for userId:', metadata.userId);

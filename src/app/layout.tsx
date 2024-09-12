@@ -32,7 +32,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <TopLoader color="#000" />
-        {/* <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} /> */}
         <SessionProvider>{children}</SessionProvider>
         <Toaster
           position="bottom-right"

@@ -20,7 +20,7 @@ export const coupons = pgTable('coupon', {
     .references(() => stores.id),
   code: text('code').notNull().unique(),
   description: text('description'),
-  discountAmount: numeric('discount_amount').notNull(),
+  discountAmount: numeric('discount_amount', { scale: 2 }).notNull(),
   usesCount: integer('uses_count').notNull(),
   active: boolean('active').default(true),
   startDate: timestamp('start_date').notNull(),

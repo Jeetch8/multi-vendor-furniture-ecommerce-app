@@ -16,7 +16,7 @@ const UserDisplay = () => {
     return (
       <div className="flex items-center gap-1">
         <LuUser size={20} />
-        <LinkUnderlined href="/signin">LOGIN</LinkUnderlined>
+        <LinkUnderlined href="/auth/signin">LOGIN</LinkUnderlined>
       </div>
     );
   }
@@ -62,7 +62,7 @@ const UserDisplay = () => {
                 className="text-sm w-fit"
                 onClick={(e) => {
                   e.preventDefault();
-                  signOut();
+                  signOut({ redirectTo: '/auth/signin' });
                 }}
               >
                 Sign Out

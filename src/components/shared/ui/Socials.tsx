@@ -8,16 +8,20 @@ import { useFormStatus } from 'react-dom';
 import { useState } from 'react';
 
 function Socials({ type }: { type: 'login' | 'signup' }) {
-  const [selectedProvider, setSelectedProvider] = useState<'google' | 'github'>(
-    'github'
-  );
+  const [selectedProvider, setSelectedProvider] = useState<
+    'google' | 'github' | undefined
+  >(undefined);
   const { pending } = useFormStatus();
   const onClick = (provider: 'google' | 'github') => {
     setSelectedProvider(provider);
     signIn(provider, {
       callbackUrl: DEFAULT_LOGIN_REDIRECT,
     });
+    setSelectedProvider(undefined);
   };
+
+  const isGooglePending = pending && selectedProvider === 'google';
+  const isGithubPending = pending && selectedProvider === 'github';
 
   const title = type === 'login' ? 'Login' : 'Signup';
 
@@ -28,23 +32,19 @@ function Socials({ type }: { type: 'login' | 'signup' }) {
           variant="outline"
           className="w-full"
           onClick={() => onClick('github')}
-          disabled={pending && selectedProvider === 'github'}
+          disabled={isGithubPending}
         >
           <FaGithub className="size-4 mr-2" />
-          {pending && selectedProvider === 'github'
-            ? 'Signing in...'
-            : `${title} with Github`}
+          {isGithubPending ? 'Signing in...' : `${title} with Github`}
         </Button>
         <Button
           variant="outline"
           className="w-full"
           onClick={() => onClick('google')}
-          disabled={pending && selectedProvider === 'google'}
+          disabled={isGooglePending}
         >
           <FaGoogle className="size-4 mr-2" />
-          {pending && selectedProvider === 'google'
-            ? 'Signing in...'
-            : `${title} with Google`}
+          {isGooglePending ? 'Signing in...' : `${title} with Google`}
         </Button>
       </div>
       <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">

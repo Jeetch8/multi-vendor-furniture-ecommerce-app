@@ -23,7 +23,7 @@ function LoginForm() {
   let validationErrors;
 
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
+  const callbackUrl = searchParams.get('callbackUrl') ?? '';
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
       ? 'Email already in use with different provider!'
@@ -104,7 +104,10 @@ function LoginForm() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <Label htmlFor="password">Password</Label>
-              <Link className="inline-block underline text-sm" href="/reset">
+              <Link
+                className="inline-block underline text-sm"
+                href="/auth/reset"
+              >
                 Forgot Password?
               </Link>
             </div>
@@ -129,9 +132,7 @@ function LoginForm() {
       {formState?.success?.message ? (
         <FormSuccess>{formState?.success?.message}</FormSuccess>
       ) : null}
-      <Button className="bg-foreground text-background w-full">
-        {showTwoFactor ? 'Confirm' : 'Sign in'}
-      </Button>
+      <SubmitButton>Sign in</SubmitButton>
     </Form>
   );
 }

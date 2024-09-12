@@ -35,7 +35,7 @@ export const orders = pgTable('order', {
     .references(() => users.id, { onDelete: 'cascade' }),
   couponId: text('coupon_id').references(() => coupons.id),
   orderNo: text('order_no').notNull().unique(),
-  totalPrice: numeric('total_price').notNull(),
+  totalPrice: numeric('total_price', { scale: 2 }).notNull(),
   orderStatus: orderStatusEnum('order_status').default('PENDING'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
@@ -64,7 +64,7 @@ export const ordersToStore = pgTable(
       .references(() => stores.id, { onDelete: 'cascade' }),
     shippingAddressId: text('shipping_address_id')
       .notNull()
-      .references(() => addresses.id),
+      .references(() => addresses.id, { onDelete: 'cascade' }),
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
   },
@@ -87,7 +87,6 @@ export const ordersToStoreRelations = relations(
       fields: [ordersToStore.storeId],
       references: [stores.id],
     }),
-    orderItems: many(orderItems),
     shipment: one(shipments),
     coupon: one(coupons),
     shippingAddress: one(addresses, {
@@ -111,7 +110,7 @@ export const orderItems = pgTable('order_item', {
     .notNull()
     .references(() => products.id, { onDelete: 'cascade' }),
   quantity: integer('quantity').notNull(),
-  price: numeric('price').notNull(),
+  price: numeric('price', { scale: 2 }).notNull(),
   selectedAttributes: json('selected_attributes'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),

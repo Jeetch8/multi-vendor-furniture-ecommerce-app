@@ -4,6 +4,7 @@ import {
   timestamp,
   boolean,
   integer,
+  numeric,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
@@ -20,7 +21,7 @@ export const discounts = pgTable('discount', {
     .references(() => stores.id),
   name: text('name').notNull(),
   description: text('description'),
-  discountPercent: integer('discount_percent').notNull(),
+  discountPercent: numeric('discount_percent', { scale: 2 }).notNull(),
   active: boolean('active').default(true),
   startDate: timestamp('start_date').notNull(),
   endDate: timestamp('end_date'),

@@ -87,14 +87,14 @@ export default auth((req): any => {
     const encodedCallbackUrl = encodeURIComponent(callbackUrl);
 
     return Response.redirect(
-      new URL(`/signin?callbackUrl=${encodedCallbackUrl}`, nextUrl)
+      new URL(`/auth/signin?callbackUrl=${encodedCallbackUrl}`, nextUrl)
     );
   }
 
   // role-based access
   if (isLoggedIn && userRole) {
     if (!isRouteAllowedForRole) {
-      return Response.redirect(new URL('/signin', nextUrl));
+      return Response.redirect(new URL('/auth/signin', nextUrl));
     }
   }
 

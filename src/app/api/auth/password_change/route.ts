@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/config/auth.config';
-import { hash, compare } from 'bcrypt';
+import { hash, compare } from 'bcryptjs';
 import { z } from 'zod';
 import { getUserByEmail, updateUserPassword } from '@/lib/services/user';
+import { auth } from '@/lib/auth';
 
 const passwordChangeSchema = z.object({
   currentPassword: z.string(),
@@ -11,7 +10,7 @@ const passwordChangeSchema = z.object({
 });
 
 export async function PATCH(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   if (!session?.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
