@@ -8,9 +8,7 @@ export const categories = pgTable('category', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => createId()),
-  discountId: text('discount_id')
-    .references(() => discounts.id)
-    .unique(),
+  discountId: text('discount_id').references(() => discounts.id),
   parentId: text('parent_id'),
   name: text('name').notNull(),
   slug: text('category_slug').notNull().unique(),

@@ -56,7 +56,6 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
     setHasSearched(true);
 
     const res = await get();
-    console.log(res);
     setIsLoading(false);
   };
 

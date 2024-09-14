@@ -162,3 +162,10 @@ export const fetchStorePerformace = async (storeId: string) => {
 
   return ordersQuery;
 };
+
+export const getStoreByUserId = async (userId: string) => {
+  const query = await db.query.stores.findFirst({
+    where: eq(stores.userId, userId),
+  });
+  return query;
+};

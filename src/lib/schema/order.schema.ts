@@ -83,6 +83,7 @@ export const ordersToStoreRelations = relations(
       fields: [ordersToStore.orderId],
       references: [orders.id],
     }),
+    orderItems: many(orderItems),
     store: one(stores, {
       fields: [ordersToStore.storeId],
       references: [stores.id],

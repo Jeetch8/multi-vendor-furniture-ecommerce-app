@@ -1,17 +1,13 @@
 import { TCategoriesToProductsMap, TCategory, TDiscount } from '@/lib/schema';
 import { TProduct } from '@/lib/schema';
+import { TProductWithDiscounts } from '@/types';
 import {
   calculatePriceWithDiscounts,
   roundToTwoDecimals,
 } from '@/utils/helpers';
 
 type ProductPriceDisplayProps = {
-  product: TProduct & {
-    discount: TDiscount | null;
-    categoryToProducts: TCategoriesToProductsMap & {
-      category: TCategory & { discount: TDiscount };
-    };
-  };
+  product: TProductWithDiscounts;
   quantity?: number;
   showTotalSavings?: boolean;
   showOldPrice?: boolean;
@@ -50,7 +46,8 @@ function ProductPriceDisplay({
 
       {discountPercentage > 0 && showTotalSavings && (
         <p className="text-xs text-primary">
-          You save: ${roundToTwoDecimals(product.price - finalPrice)}
+          You save: $
+          {roundToTwoDecimals(parseFloat(product.price) - finalPrice)}
         </p>
       )}
     </div>

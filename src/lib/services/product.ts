@@ -150,13 +150,15 @@ export async function fetchProductsForList(
         priceRange.max = productPrice;
       }
       const mapTable = product.categoryToProducts;
-      if (mapTable.category.subCategories.length > 0) {
-        mapTable.category.subCategories.forEach((subCategory) => {
-          categoriesForSidebar.add(subCategory.name);
-        });
-      } else {
-        categoriesForSidebar.add(mapTable.category.name);
-      }
+      mapTable.forEach(({ category }) => {
+        if (category.subCategories.length > 0) {
+          category.subCategories.forEach((subCategory) => {
+            categoriesForSidebar.add(subCategory.name);
+          });
+        } else {
+          categoriesForSidebar.add(category.name);
+        }
+      });
       product.attributes.forEach((attribute) => {
         const attributeValues =
           attribute.attributeCategory.type === 'multi-select'
@@ -351,11 +353,93 @@ export async function fetchSimilarProducts(productSlug: string) {
   const similarProductsArr: (TProduct & {
     images: TProductImage[];
   })[] = [];
-  productsQuery.categoryToProducts.category.products.forEach((products) => {
-    if (products.product.slug !== productSlug) {
-      similarProductsArr.push(products.product);
-    }
+  productsQuery.categoryToProducts.forEach((mapTable) => {
+    mapTable.category.products.forEach((products) => {
+      if (products.product.slug !== productSlug) {
+        similarProductsArr.push(products.product);
+      }
+    });
   });
 
   return similarProductsArr;
 }
+
+export const fetchProductsByStoreId = async ({
+  storeId,
+  currentPage,
+  includeUnapprovedStores,
+  itemsPerPage,
+  querySearch,
+  sortBy,
+}: {
+  storeId: string;
+  sortBy?: {
+    sort?: string;
+    order?: string;
+  };
+  currentPage?: number;
+  itemsPerPage?: number;
+  querySearch?: string;
+  includeUnapprovedStores?: boolean;
+}) => {
+  try {
+    const whererArr: any[] = [];
+    if (querySearch?.length && querySearch?.length > 0) {
+      whererArr.push(
+        ilike(products.name, `%${querySearch}%`),
+        ilike(products.description, `%${querySearch}%`),
+        ilike(products.summary, `%${querySearch}%`),
+        ilike(products.brand, `%${querySearch}%`)
+      );
+      const parsedPrice = parseFloat(querySearch);
+      if (parsedPrice) {
+        whererArr.push(eq(products.price, querySearch));
+      }
+      const querySearchLowerCase = querySearch.toLowerCase();
+      if (querySearchLowerCase === 'true' || querySearchLowerCase === 'false') {
+        whererArr.push(
+          eq(products.status, querySearchLowerCase === 'true' ? true : false)
+        );
+      }
+    }
+    const query = await db.query.products.findMany({
+      where: and(or(...whererArr), eq(products.storeId, storeId)),
+      with: {
+        images: true,
+        categoryToProducts: {
+          with: {
+            category: {
+              with: {
+                discount: true,
+              },
+            },
+          },
+        },
+        discount: true,
+        reviews: true,
+        attributes: {
+          with: {
+            product: true,
+          },
+        },
+      },
+      offset:
+        itemsPerPage && currentPage
+          ? (currentPage - 1) * itemsPerPage
+          : undefined,
+      limit: itemsPerPage ? itemsPerPage : undefined,
+      orderBy(fields, operators) {
+        return operators.desc(fields.createdAt);
+      },
+    });
+
+    const countOfProducts = await db
+      .select({ count: count() })
+      .from(products)
+      .where(and(or(...whererArr), eq(products.storeId, storeId)));
+    return { countOfProducts: countOfProducts[0].count || 0, products: query };
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return { countOfProducts: 0, products: [] };
+  }
+};

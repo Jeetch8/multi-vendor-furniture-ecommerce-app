@@ -1,3 +1,4 @@
+import { SQL } from 'drizzle-orm';
 import { TCategoryForSidebar } from './Category';
 import { InferQueryModel } from '@/utils/QueryTypesBuilder';
 
@@ -104,3 +105,46 @@ export type TProductCard = InferQueryModel<
     };
   }
 >;
+
+export type TProductForTable = InferQueryModel<
+  'products',
+  {
+    with: {
+      images: true;
+      reviews: true;
+      discount: true;
+      categoryToProducts: {
+        with: {
+          category: {
+            with: {
+              discount: true;
+            };
+          };
+        };
+      };
+      attributes: {
+        with: {
+          product: true;
+        };
+      };
+    };
+  }
+>;
+
+export type TProductWithRelations = InferQueryModel<
+  'products',
+  {
+    with: {
+      attributes: true;
+      categoryToProducts: true;
+      discount: true;
+      favorites: true;
+      images: true;
+      orderItems: true;
+      reviews: true;
+      store: true;
+    };
+  }
+>;
+
+export type TSortableProductFields = keyof Partial<TProductWithRelations>;

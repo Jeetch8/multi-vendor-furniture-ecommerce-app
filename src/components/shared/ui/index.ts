@@ -18,3 +18,6 @@ export { default as ProductCard } from './ProductCard';
 export { default as EmptyTableBody } from './EmptyTableBody';
 export { default as PriceRangeDialer } from './PriceRangeDialer';
 export { default as CustomTableHead } from './CustomTableHead';
+export { default as MultiSelect } from './MultiSelect';
+export { default as Search } from './Search';
+export { default as Box } from './Box';

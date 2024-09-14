@@ -20,7 +20,6 @@ export default auth((req): any => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
   const userRole = req.auth?.user?.role as TUserRole;
-
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isApiCategoriesRoute = nextUrl.pathname.startsWith(apiCategoriesRoute);
   const isApiProductRoute = nextUrl.pathname.startsWith(apiProductsRoute);
@@ -102,5 +101,5 @@ export default auth((req): any => {
 });
 
 export const config = {
-  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'], // clerk
+  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 };

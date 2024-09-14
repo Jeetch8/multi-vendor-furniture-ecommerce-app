@@ -18,31 +18,25 @@ export const fetchOrdersByUser = async (
     const orders = await db.query.orders.findMany({
       where: eq(schema.orders.userId, id),
       with: {
+        orderItems: true,
         orderToStores: {
           with: {
-            order: {
+            shipment: true,
+            shippingAddress: true,
+            store: true,
+            orderItems: {
               with: {
-                orderItems: {
+                product: {
                   with: {
-                    product: {
-                      with: {
-                        images: true,
-                      },
-                    },
+                    images: true,
                   },
                 },
               },
             },
-            store: true,
-            shippingAddress: true,
-            shipment: true,
           },
         },
-        orderItems: true,
       },
-      orderBy: desc(schema.orders.createdAt),
     });
-
     return orders;
   } catch (error) {
     console.error('Error fetching orders:', error);
@@ -110,62 +104,7 @@ export const fetchOrdersByStoreId = async ({
         },
       },
     });
-    // const queryRes = await db
-    //   .select({
-    //     ...getTableColumns(schema.orders),
-    //     user: getTableColumns(schema.users),
-    //     orderItem: getTableColumns(schema.orderItems),
-    //     product: getTableColumns(schema.products),
-    //   })
-    //   .from(schema.ordersToStore)
-    //   .where(
-    //     and(
-    //       eq(schema.ordersToStore.storeId, storeId),
-    //       eq(schema.orders.orderStatus, 'COMPLETED')
-    //     )
-    //   )
-    //   .leftJoin(
-    //     schema.orders,
-    //     eq(schema.orders.id, schema.ordersToStore.orderId)
-    //   )
-    //   .leftJoin(schema.users, eq(schema.orders.userId, schema.users.id))
-    //   .leftJoin(
-    //     schema.orderItems,
-    //     eq(schema.orderItems.orderId, schema.orders.id)
-    //   )
-    //   .leftJoin(
-    //     schema.products,
-    //     eq(schema.products.id, schema.orderItems.productId)
-    //   )
-    //   .orderBy(desc(schema.orders.createdAt))
-    //   .limit(10)
-    //   .groupBy(
-    //     schema.orders.id,
-    //     schema.users.id,
-    //     schema.products.id,
-    //     schema.orderItems.id
-    //   );
-    // const ordersObj: Record<string, TOrderWithDetails> = {};
-    // const orderItemsObj: Record<
-    //   string,
-    //   (schema.TOrderItem & { product: schema.TProduct })[]
-    // > = {};
-    // queryRes.forEach((item) => {
-    //   const tempOrderObj = item.id;
-    //   if(!orderObj){
 
-    //   }
-    // })
-    // queryRes.forEach((item) => {
-    //   const orderItemsArr = orderItemsObj[item?.orderItem?.orderId!];
-    //   const newOrderItemObj = { ...item.orderItem!, product: item.product! };
-    //   if (!orderItemsArr) {
-    //     orderItemsObj[item?.orderItem?.orderId!] = [newOrderItemObj];
-    //   } else {
-    //     orderItemsArr.push(newOrderItemObj);
-    //   }
-    // });
-    // console.log(orderItemsObj);
     return queryRes ?? null;
   } catch (error) {
     console.error('Error fetching orders:', error);

@@ -6,3 +6,5 @@ export const orderStatusColors = {
   CANCELLED: 'bg-red-100 text-red-400 border-red-500',
   REFUNDED: 'bg-yellow-200 text-yellow-500 border-yellow-500',
 };
+
+export const ITEMS_PER_PAGE = 10;

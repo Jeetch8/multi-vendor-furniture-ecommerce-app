@@ -124,7 +124,7 @@ function OrderItem({ order }: { order: TOrderForMyOrders }) {
                             (a, index) => (
                               <div
                                 className="flex gap-1 text-gray-400"
-                                key={a.attName}
+                                key={a.attName + index}
                               >
                                 <div className={`${index === 0 && 'hidden'}`}>
                                   &#8226;

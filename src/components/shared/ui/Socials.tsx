@@ -29,6 +29,7 @@ function Socials({ type }: { type: 'login' | 'signup' }) {
     <div className="flex flex-col justify-evenly gap-4">
       <div className="flex flex-col gap-4">
         <Button
+          type="button"
           variant="outline"
           className="w-full"
           onClick={() => onClick('github')}
@@ -38,6 +39,7 @@ function Socials({ type }: { type: 'login' | 'signup' }) {
           {isGithubPending ? 'Signing in...' : `${title} with Github`}
         </Button>
         <Button
+          type="button"
           variant="outline"
           className="w-full"
           onClick={() => onClick('google')}

@@ -9,7 +9,7 @@ import Input from '@/components/shared/ui/Input';
 import SubmitButton from '@/components/shared/ui/SubmitButton';
 import TextArea from '@/components/shared/ui/TextArea';
 import { newApplication } from '@/actions/store';
-import { UploadButton, UploadDropzone } from '@/lib/uploadthing';
+import { UploadDropzone } from '@/lib/uploadthing';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 

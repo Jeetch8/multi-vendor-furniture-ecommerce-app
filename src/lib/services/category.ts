@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, ilike, sql } from 'drizzle-orm';
 import * as schema from '@/lib/schema';
 
 export const getTopSellingCategoriesByStore = async (storeId: string) => {
@@ -16,12 +16,13 @@ export const getTopSellingCategoriesByStore = async (storeId: string) => {
   });
   const categoryQuantityObj: Record<string, number> = {};
   productsQr.forEach((product) => {
-    const category = product.categoryToProducts.category;
-    if (categoryQuantityObj[category.name]) {
-      categoryQuantityObj[category.name]++;
-    } else {
-      categoryQuantityObj[category.name] = 1;
-    }
+    product.categoryToProducts.forEach(({ category }) => {
+      if (categoryQuantityObj[category.name]) {
+        categoryQuantityObj[category.name]++;
+      } else {
+        categoryQuantityObj[category.name] = 1;
+      }
+    });
   });
   const categoryArr = Object.entries(categoryQuantityObj).map(
     ([categoryId, quantity]) => ({
@@ -67,3 +68,45 @@ export async function fetchCategories(term?: string) {
     throw new Error("Couldn't fetch categories");
   }
 }
+
+export const fetchCategoryBySlug = async (slug: string) => {
+  const query = await db.query.categories.findFirst({
+    where: and(
+      // eq(schema.categories.isActive, true),
+      ilike(schema.categories.slug, `%${slug}%`)
+    ),
+    with: {
+      subCategories: {
+        with: {
+          products: {
+            columns: {
+              id: true,
+            },
+          },
+        },
+      },
+      products: {
+        columns: {
+          id: true,
+        },
+        // with: {
+        //   product: {
+        //     with: {
+        //       store: true,
+        //     },
+        //   },
+        // },
+      },
+      categoryToAttributeCategory: {
+        with: {
+          attributeCategory: {
+            with: {
+              productAttributes: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  return query;
+};

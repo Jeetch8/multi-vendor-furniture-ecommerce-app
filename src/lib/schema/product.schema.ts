@@ -46,10 +46,11 @@ export const products = pgTable(
 export const productsRelations = relations(products, ({ many, one }) => ({
   images: many(productImages),
   attributes: many(productAttributes),
-  categoryToProducts: one(categoryToProductMap, {
-    fields: [products.id],
-    references: [categoryToProductMap.productId],
-  }),
+  // categoryToProducts: one(categoryToProductMap, {
+  //   fields: [products.id],
+  //   references: [categoryToProductMap.productId],
+  // }),
+  categoryToProducts: many(categoryToProductMap),
   favorites: many(favorites),
   reviews: many(reviews),
   store: one(stores, {

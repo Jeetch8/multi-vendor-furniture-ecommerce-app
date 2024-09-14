@@ -22,6 +22,51 @@ export const newApplicationSchema = z.object({
     .max(100, { message: 'Description cannot exceed 100 characters.' }),
   img: z
     .string()
-    // .min(1, { message: 'You must upload at least 1 image.' })
+    .min(1, { message: 'You must upload at least 1 image.' })
     .nullable(),
+});
+
+export const createEditNewProductSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .max(100, 'Name cannot exceed 100 characters'),
+  description: z
+    .string()
+    .min(1, 'Description is required')
+    .max(5000, 'Description cannot exceed 1000 characters'),
+  summary: z
+    .string()
+    .min(1, 'Summary is required')
+    .max(200, 'Summary cannot exceed 200 characters'),
+  price: z.coerce
+    .number()
+    .positive('Price must be a positive number')
+    .max(1000000, 'Price cannot exceed 1,000,000'),
+  stock: z.coerce
+    .number()
+    .positive('Stock must be a positive number')
+    .lte(10000, 'Stock must not exceed 10000'),
+  brand: z
+    .string()
+    .min(1, 'Brand is required')
+    .max(50, 'Brand cannot exceed 50 characters'),
+  images: z.array(z.string()).min(1, 'Images are required'),
+  categories: z
+    .array(
+      z.object({
+        catId: z.string(),
+        catName: z.string(),
+        catSlug: z.string(),
+      })
+    )
+    .min(1, 'Category is required'),
+  attributes: z
+    .array(
+      z.object({
+        attributeCategoryId: z.string(),
+        value: z.string(),
+      })
+    )
+    .min(1, 'At least one attribute is required'),
 });

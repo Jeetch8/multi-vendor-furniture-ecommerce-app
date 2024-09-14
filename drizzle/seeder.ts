@@ -7,52 +7,13 @@ import { createId } from '@paralleldrive/cuid2';
 import { join } from 'path';
 import { TUnsplashResponse } from './types';
 import fs from 'fs';
+import {
+  attributeCategoryArr,
+  categoriesWithSubCategoriesArr,
+  productAttributesArr,
+} from './fakeData';
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
-
-const categoriesArr = [
-  'electronics',
-  'clothing',
-  'home-garden',
-  'toys-games',
-  'sports-outdoors',
-  'books-media',
-  'beauty-personal-care',
-  'automotive',
-  'health-wellness',
-  'jewelry-watches',
-];
-const categoryAttributesArr = [
-  'color',
-  'size',
-  'material',
-  'style',
-  'brand',
-  'ram',
-  'storage',
-  'processor',
-  'battery',
-  'camera',
-];
-const productAttributesArr = {
-  color: ['red', 'blue', 'green', 'yellow', 'purple'],
-  size: ['small', 'medium', 'large', 'x-large', 'xx-large'],
-  material: ['cotton', 'polyester', 'silk', 'leather', 'nylon'],
-  style: ['casual', 'formal', 'sporty', 'boho', 'preppy'],
-  brand: ['nike', 'adidas', 'puma', 'under armour', 'new balance'],
-  ram: ['4GB', '8GB', '16GB', '32GB', '64GB'],
-  storage: ['128GB', '256GB', '512GB', '1TB', '2TB'],
-  processor: [
-    'intel core i3',
-    'intel core i5',
-    'intel core i7',
-    'amd ryzen 3',
-    'amd ryzen 5',
-    'amd ryzen 7',
-  ],
-  battery: ['3000mAh', '4000mAh', '5000mAh', '6000mAh', '7000mAh'],
-  camera: ['12MP', '16MP', '24MP', '48MP', '108MP'],
-};
 
 const randomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -61,7 +22,7 @@ const randomInt = (min: number, max: number) => {
 const fetchImagesFromUnsplash = async (page_no: number = 1) => {
   try {
     const res = await fetch(
-      `https://api.unsplash.com/search/photos?page=${page_no}&per_page=30&query=nature&client_id=UrgeI-BR8KCMwcVaLcmmcd130yqXAMBY9nEytB3EyHY`
+      `https://api.unsplash.com/search/photos?page=${page_no}&per_page=30&query=nature&client_id=${process.env.UNSPLASH_CLIENT_ID}`
     );
     const jsondata: TUnsplashResponse = await res.json();
     return jsondata;
@@ -163,11 +124,11 @@ const generateStore = (userId: string): typeof schema.stores.$inferSelect => {
 };
 
 const generateCategory = ({
-  category,
+  name,
   discountId,
   parentId,
 }: {
-  category: string;
+  name: string;
   discountId: string | null;
   parentId: string | null;
 }): typeof schema.categories.$inferSelect => {
@@ -175,8 +136,8 @@ const generateCategory = ({
     id: createId(),
     discountId,
     parentId,
-    name: category,
-    slug: faker.helpers.slugify(category).toLowerCase(),
+    name: name,
+    slug: faker.helpers.slugify(name).toLowerCase(),
     description: faker.commerce.productDescription(),
     isActive: faker.datatype.boolean(),
     image: faker.image.url(),
@@ -284,7 +245,7 @@ const generateOrderItem = (
 ): typeof schema.orderItems.$inferSelect => {
   const arrayOfSelectedAttributes: { attName: string; val: string }[] = [];
   for (let i = 0; i < faker.number.int({ min: 1, max: 5 }); i++) {
-    const attName = faker.helpers.arrayElement(categoryAttributesArr);
+    const attName = faker.helpers.arrayElement(attributeCategoryArr);
     const val = faker.helpers.arrayElement(
       productAttributesArr[attName as keyof typeof productAttributesArr]
     );
@@ -433,26 +394,47 @@ const seed = async () => {
       discounts.push(result[0]);
     }
 
-    const categories: (typeof schema.categories.$inferSelect)[] = [];
-    for (let i = 0; i < categoriesArr.length; i++) {
+    const categories: (schema.TCategory & {
+      subCategories: schema.TCategory[];
+    })[] = [];
+    for (let i = 0; i < categoriesWithSubCategoriesArr.length; i++) {
+      const currentCategory = categoriesWithSubCategoriesArr[i];
       const shouldUseDiscount = faker.datatype.boolean() && discounts[i]?.id;
-      const categoryObj = generateCategory({
-        category: categoriesArr[i],
+      const parentCategoryObj = generateCategory({
+        name: currentCategory.name,
         discountId: shouldUseDiscount ? discounts[i]?.id : null,
         parentId: null,
       });
-      const result = await db
+      const parentCategoryRes = await db
         .insert(schema.categories)
-        .values(categoryObj)
+        .values(parentCategoryObj)
         .returning();
-      categories.push(result[0]);
+      const subCategoriesArr: schema.TCategory[] = [];
+      for (let j = 0; j < currentCategory.subCategories.length; j++) {
+        const shouldUseDiscount = faker.datatype.boolean() && discounts[i]?.id;
+        const currentSubCategory = currentCategory.subCategories[j];
+        const categoryObj = generateCategory({
+          name: currentSubCategory.name,
+          discountId: shouldUseDiscount ? discounts[i]?.id : null,
+          parentId: parentCategoryRes[0].id,
+        });
+        subCategoriesArr.push(categoryObj);
+      }
+      const subCategoriesRes = await db
+        .insert(schema.categories)
+        .values(subCategoriesArr)
+        .returning();
+      categories.push({
+        ...parentCategoryRes[0],
+        subCategories: subCategoriesRes,
+      });
     }
 
     const imagesArray = await getRandomImages();
     const products: (typeof schema.products.$inferSelect)[] = [];
     let prevProdNumberOfImages = 0;
     for (let i = 0; i < stores.length; i++) {
-      for (let k = 0; k < 10; k++) {
+      for (let k = 0; k < faker.number.int({ min: 10, max: 15 }); k++) {
         const product = generateProduct(stores[i].id);
         const result = await db
           .insert(schema.products)
@@ -461,10 +443,20 @@ const seed = async () => {
             price: product.price,
           })
           .returning();
-        await db.insert(schema.categoryToProductMap).values({
-          productId: result[0].id,
-          categoryId: categories[k].id,
-        });
+        const selectedCategory = faker.helpers.arrayElement(categories);
+        const selectedSubCategory = faker.helpers.arrayElement(
+          selectedCategory.subCategories
+        );
+        await db.insert(schema.categoryToProductMap).values([
+          {
+            productId: result[0].id,
+            categoryId: selectedCategory.id,
+          },
+          {
+            productId: result[0].id,
+            categoryId: selectedSubCategory.id,
+          },
+        ]);
         const numberOfImagesToGenerate = faker.number.int({ min: 3, max: 5 });
         for (let k = 0; k < numberOfImagesToGenerate; k++) {
           const randImgObj = imagesArray[k + prevProdNumberOfImages];
@@ -507,7 +499,7 @@ const seed = async () => {
           selectableValues =
             productAttributesArr[
               faker.helpers.arrayElement(
-                categoryAttributesArr
+                attributeCategoryArr
               ) as keyof typeof productAttributesArr
             ].join(', ');
         }
@@ -516,7 +508,7 @@ const seed = async () => {
             .insert(schema.attributeCategory)
             .values(
               generateAttributeCategory({
-                name: faker.helpers.arrayElement(categoryAttributesArr),
+                name: faker.helpers.arrayElement(attributeCategoryArr),
                 type: attributeType,
               })
             )

@@ -1,5 +1,9 @@
 export type { TCartWithDetails } from './Cart';
-export type { TCategoryForSidebar } from './Category';
+export type {
+  TCategoryForSidebar,
+  TCategoryForNewProduct,
+  TCategoryWithSubCategories,
+} from './Category';
 export type { TProductsForFavorites } from './Favorite';
 export type { TOrderForMyOrders, TOrderWithDetails } from './Order';
 export type {
@@ -8,6 +12,9 @@ export type {
   TProductWithDiscounts,
   TProductsForList,
   TProductsForWithOptions,
+  TProductForTable,
+  TProductWithRelations,
+  TSortableProductFields,
 } from './Product';
 export type { TReviewForAccount } from './Review';
 export type { TSearchResults } from './Search';

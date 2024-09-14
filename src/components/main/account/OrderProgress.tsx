@@ -1,4 +1,5 @@
 import { capitalizeOnlyFirstLetter } from '@/utils/helpers';
+import React from 'react';
 import { MdOutlineCheck } from 'react-icons/md';
 
 const statuses = ['PENDING', 'INPROGRESS', 'SHIPPED', 'COMPLETED'];
@@ -19,7 +20,7 @@ function OrderProgress({ orderStatus }: { orderStatus: string }) {
       <div className="flex h-full items-center">
         <div className="flex w-full items-center justify-center px-4">
           {statuses.map((status, index) => (
-            <>
+            <React.Fragment key={status + index}>
               <div className="relative flex flex-col items-center gap-4 font-semibold">
                 <div
                   className={`flex h-6 w-6 items-center justify-center rounded-full ${
@@ -39,7 +40,7 @@ function OrderProgress({ orderStatus }: { orderStatus: string }) {
                   statuses.length - 1 === index && 'hidden'
                 } ${index < currentStatusIndex && 'bg-green-300'}`}
               ></div>
-            </>
+            </React.Fragment>
           ))}
         </div>
       </div>
