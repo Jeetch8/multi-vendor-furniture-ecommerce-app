@@ -1,12 +1,17 @@
 export type { TCartWithDetails } from './Cart';
 export type {
   TCategoryForSidebar,
-  TCategoryForNewProduct,
+  TCategoryForProduct,
   TCategoryWithSubCategories,
 } from './Category';
 export type { TProductsForFavorites } from './Favorite';
-export type { TOrderForMyOrders, TOrderWithDetails } from './Order';
 export type {
+  TOrderForMyOrders,
+  TOrderWithDetails,
+  TOrderforOrdersTable,
+} from './Order';
+export type {
+  SortableProductFields,
   TProductCard,
   TProductForShowPage,
   TProductWithDiscounts,

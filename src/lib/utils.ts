@@ -15,3 +15,16 @@ export function formatSeconds(seconds: number) {
 
   return `${formattedMinutes}:${formattedSeconds}`;
 }
+
+export enum Role {
+  APPLICANT = 'applicant',
+  TRAINER = 'trainer',
+  ADMIN = 'admin',
+}
+
+export function enumToPgEnum(myEnum: any): [string, ...string[]] {
+  return Object.values(myEnum).map((value: any) => `${value}`) as [
+    string,
+    ...string[]
+  ];
+}

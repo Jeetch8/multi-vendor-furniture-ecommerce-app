@@ -30,6 +30,7 @@ import {
   orderStatusEnum,
   ordersToStore,
   ordersToStoreRelations,
+  orderStatusEnumSchema,
 } from './order.schema';
 import {
   productAttributes,
@@ -48,6 +49,7 @@ import {
   shipmentsRelations,
   shippingRates,
   shippingRatesRelations,
+  shipmentStatusEnumSchema,
 } from './shipment.schema';
 import {
   userRoleEnum,
@@ -108,10 +110,12 @@ export type TCollection = typeof collections.$inferSelect;
 export type TCollectionsToProductsMap =
   typeof collectionsToProductsMap.$inferSelect;
 export type TUserRole = (typeof userRoleEnum.enumValues)[number];
-export type TOrderStatusEnum = typeof orderStatusEnum.enumValues;
-export type TShipmentStatusEnum = typeof shipmentStatusEnum.enumValues;
+export type TOrderStatusEnum = typeof orderStatusEnum;
+export type TShipmentStatusEnum = typeof shipmentStatusEnum;
 
 export {
+  shipmentStatusEnumSchema,
+  orderStatusEnumSchema,
   collections,
   collectionsRelations,
   collectionsToProductsMap,

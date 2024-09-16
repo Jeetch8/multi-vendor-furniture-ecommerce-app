@@ -3,9 +3,9 @@ import { fetchCategories } from '@/lib/services/category';
 import { CategoriesProvider } from '@/Context/CategoryContext';
 import { Box, EmptyTableBody } from '@/components/shared/ui';
 import { Search } from '@/components/shared/ui';
-import ExcelButton from '@/components/store/ExcelButton';
-import NewProductUpdateForm from '@/components/store/NewProductUpdateForm';
-import ProductTable from '@/components/store/ProductTable';
+import ExcelButton from '@/components/main/store/products/ExcelButton';
+import NewProductUpdateForm from '@/components/main/store/products/NewProductUpdateForm';
+import ProductTable from '@/components/main/store/products/ProductTable';
 import {
   Dialog,
   DialogContent,

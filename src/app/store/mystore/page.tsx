@@ -1,8 +1,8 @@
 import Map from '@/components/shared/ui/Map';
-import LatestOrdersTable from '@/components/main/mystore/LatestOrdersTable';
-import OrderLineChart from '@/components/main/mystore/OrderLineChart';
-import OrderPieChart from '@/components/main/mystore/OrderPieChart';
-import PerformanceStatsPanel from '@/components/main/mystore/PerformanceStatsPanel';
+import LatestOrdersTable from '@/components/main/store/mystore/LatestOrdersTable';
+import OrderLineChart from '@/components/main/store/mystore/OrderLineChart';
+import OrderPieChart from '@/components/main/store/mystore/OrderPieChart';
+import PerformanceStatsPanel from '@/components/main/store/mystore/PerformanceStatsPanel';
 
 async function MyStorePage() {
   return (

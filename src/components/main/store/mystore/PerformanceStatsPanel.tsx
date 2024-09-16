@@ -1,4 +1,3 @@
-import { fetchOrdersByStoreId } from '@/lib/services/order';
 import StatCard from './StatCard';
 import { auth } from '@/lib/auth';
 import { fetchStorePerformace } from '@/lib/services/store';

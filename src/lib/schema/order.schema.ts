@@ -16,15 +16,21 @@ import { stores } from './store.schema';
 import { coupons } from './coupon.schema';
 import { addresses } from './address.schema';
 import { shipments } from './shipment.schema';
+import { enumToPgEnum } from '../utils';
 
-export const orderStatusEnum = pgEnum('order_status', [
-  'PENDING',
-  'INPROGRESS',
-  'SHIPPED',
-  'COMPLETED',
-  'CANCELLED',
-  'REFUNDED',
-]);
+export enum orderStatusEnum {
+  'PENDING' = 'PENDING',
+  'INPROGRESS' = 'INPROGRESS',
+  'SHIPPED' = 'SHIPPED',
+  'COMPLETED' = 'COMPLETED',
+  'CANCELLED' = 'CANCELLED',
+  'REFUNDED' = 'REFUNDED',
+}
+
+export const orderStatusEnumSchema = pgEnum(
+  'order_status',
+  enumToPgEnum(orderStatusEnum)
+);
 
 export const orders = pgTable('order', {
   id: text('id')
@@ -36,7 +42,7 @@ export const orders = pgTable('order', {
   couponId: text('coupon_id').references(() => coupons.id),
   orderNo: text('order_no').notNull().unique(),
   totalPrice: numeric('total_price', { scale: 2 }).notNull(),
-  orderStatus: orderStatusEnum('order_status').default('PENDING'),
+  orderStatus: orderStatusEnumSchema('order_status').default('PENDING'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
@@ -89,7 +95,7 @@ export const ordersToStoreRelations = relations(
       references: [stores.id],
     }),
     shipment: one(shipments),
-    coupon: one(coupons),
+    // coupon: one(coupons),
     shippingAddress: one(addresses, {
       fields: [ordersToStore.shippingAddressId],
       references: [addresses.id],

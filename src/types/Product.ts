@@ -148,3 +148,5 @@ export type TProductWithRelations = InferQueryModel<
 >;
 
 export type TSortableProductFields = keyof Partial<TProductWithRelations>;
+
+export type SortableProductFields = keyof Partial<TProductWithRelations>;

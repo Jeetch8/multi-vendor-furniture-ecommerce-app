@@ -588,3 +588,5 @@ const seed = async () => {
 
 seed();
 // addRandomImagesToFile();
+
+// TODO: create shipment and shipping rates

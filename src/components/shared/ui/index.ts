@@ -21,3 +21,5 @@ export { default as CustomTableHead } from './CustomTableHead';
 export { default as MultiSelect } from './MultiSelect';
 export { default as Search } from './Search';
 export { default as Box } from './Box';
+export { default as Pagination } from './Pagination';
+export { default as Filter } from './Filter';

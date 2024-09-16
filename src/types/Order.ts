@@ -42,3 +42,24 @@ export type TOrderWithDetails = InferQueryModel<
     };
   }
 >;
+
+export type TOrderforOrdersTable = InferQueryModel<
+  'ordersToStore',
+  {
+    with: {
+      order: {
+        with: {
+          user: true;
+        };
+      };
+      shippingAddress: true;
+      shipment: true;
+      store: true;
+      orderItems: {
+        with: {
+          product: true;
+        };
+      };
+    };
+  }
+>;

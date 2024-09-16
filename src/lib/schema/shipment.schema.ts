@@ -11,16 +11,22 @@ import { relations } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 import { ordersToStore } from './order.schema';
 import { carriers } from './carrier.schema';
+import { enumToPgEnum } from '../utils';
 
-export const shipmentStatusEnum = pgEnum('shipment_status', [
-  'PENDING',
-  'PROCESSING',
-  'SHIPPED',
-  'IN_TRANSIT',
-  'DELIVERED',
-  'RETURNED',
-  'FAILED',
-]);
+export enum shipmentStatusEnum {
+  'PENDING' = 'PENDING',
+  'PROCESSING' = 'PROCESSING',
+  'SHIPPED' = 'SHIPPED',
+  'IN_TRANSIT' = 'IN_TRANSIT',
+  'DELIVERED' = 'DELIVERED',
+  'RETURNED' = 'RETURNED',
+  'FAILED' = 'FAILED',
+}
+
+export const shipmentStatusEnumSchema = pgEnum(
+  'shipment_status',
+  enumToPgEnum(shipmentStatusEnum)
+);
 
 export const shippingRates = pgTable(
   'shipping_rate',
@@ -63,7 +69,7 @@ export const shipments = pgTable('shipment', {
   estimatedDelivery: timestamp('estimated_delivery'),
   actualDelivery: timestamp('actual_delivery'),
   shippingCost: numeric('shipping_cost', { scale: 2 }),
-  status: shipmentStatusEnum('status').default('PENDING'),
+  status: shipmentStatusEnumSchema('status').default('PENDING'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
