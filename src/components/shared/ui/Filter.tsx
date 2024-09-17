@@ -42,10 +42,10 @@ function Filter({ filterName, filters, label }: FilterByProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-xl border px-1 py-1.5">
+      <DropdownMenuTrigger className="rounded-xl border px-1 py-1.5 ml-2 bg-secondary text-primary active:bg-primary-foreground duration-200">
         {label}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-white">
+      <DropdownMenuContent className="bg-secondary text-primary">
         {filters.map((filter) => (
           <DropdownMenuItem
             key={filter.value}
@@ -53,7 +53,9 @@ function Filter({ filterName, filters, label }: FilterByProps) {
             className="cursor-pointer"
           >
             {filter.label}
-            <p className="ml-auto">{currentFilters.includes(filter.value) && '✓'}</p>
+            <p className="ml-auto">
+              {currentFilters.includes(filter.value) && '✓'}
+            </p>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

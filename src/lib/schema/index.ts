@@ -4,6 +4,8 @@ import {
   carriersRelations,
   storeToCarriers,
   storeToCarriersRelations,
+  shippingRates,
+  shippingRatesRelations,
 } from './carrier.schema';
 import {
   cartItems,
@@ -47,8 +49,6 @@ import {
   shipments,
   shipmentStatusEnum,
   shipmentsRelations,
-  shippingRates,
-  shippingRatesRelations,
   shipmentStatusEnumSchema,
 } from './shipment.schema';
 import {
@@ -160,6 +160,7 @@ export {
   shipments,
   shipmentStatusEnum,
   shipmentsRelations,
+  sessions,
   shippingRates,
   shippingRatesRelations,
   addresses,

@@ -18,7 +18,7 @@ function ExcelButton() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-xl bg-primary px-4 py-2 text-secondary active:bg-muted-foreground">
+      <DropdownMenuTrigger className="ml-2 rounded-xl bg-secondary px-4 py-2 text-primary active:bg-primary-foreground duration-200">
         Export
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-secondary">

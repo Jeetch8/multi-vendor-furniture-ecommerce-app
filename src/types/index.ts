@@ -26,3 +26,4 @@ export type { TSearchResults } from './Search';
 export type { TStoreForCheckout } from './Store';
 export type { TUpload } from './Upload';
 export type { TUserForAccountSetings } from './User';
+export type { TStoreToCarrierForTable } from './Carrier';

@@ -56,7 +56,7 @@ async function StoreProductsPage({ searchParams }: PageProps) {
               <div>
                 <ExcelButton />
                 <Dialog>
-                  <DialogTrigger className="ml-2 rounded-xl bg-foreground px-4 py-2 text-secondary active:bg-muted-foreground">
+                  <DialogTrigger className="ml-2 rounded-xl bg-secondary px-4 py-2 text-primary active:bg-primary-foreground duration-200">
                     New Product
                   </DialogTrigger>
                   <DialogContent

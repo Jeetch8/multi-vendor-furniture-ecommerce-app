@@ -271,7 +271,7 @@ const generateOrder = (userId: string): typeof schema.orders.$inferSelect => {
     couponId: null,
     orderNo: createId(),
     totalPrice: faker.commerce.price(),
-    orderStatus: faker.helpers.arrayElement(schema.orderStatusEnum.enumValues),
+    orderStatus: faker.helpers.objectValue(schema.orderStatusEnum),
     createdAt: faker.date.past(),
     updatedAt: faker.date.past(),
   };
@@ -309,6 +309,43 @@ const generateFavorite = (
   };
 };
 
+const generateShippingRate = (
+  carrierId: string
+): typeof schema.shippingRates.$inferSelect => {
+  return {
+    id: createId(),
+    carrierId,
+    name: faker.commerce.productName(),
+    description: faker.commerce.productDescription(),
+    baseRate: faker.commerce.price({ min: 5, max: 20 }),
+    perKgRate: faker.commerce.price({ min: 1, max: 5 }),
+    minWeight: faker.commerce.price({ min: 0.1, max: 1 }),
+    maxWeight: faker.commerce.price({ min: 1, max: 10 }),
+    isActive: faker.datatype.boolean(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
+const generateShipment = (
+  orderToStoreId: string,
+  carrierId: string
+): typeof schema.shipments.$inferSelect => {
+  return {
+    id: createId(),
+    orderToStoreId,
+    carrierId,
+    trackingNumber: createId(),
+    shippingMethod: faker.commerce.productName(),
+    estimatedDelivery: faker.date.future(),
+    actualDelivery: faker.date.future(),
+    shippingCost: faker.commerce.price({ min: 5, max: 50 }),
+    status: faker.helpers.objectValue(schema.shipmentStatusEnum),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+};
+
 const getRotatingValuesOfArr = ({
   arr,
 }: {
@@ -335,6 +372,7 @@ const cleanDatabase = async () => {
   await db.delete(schema.ordersToStore);
   await db.delete(schema.orders);
   await db.delete(schema.orderItems);
+  await db.delete(schema.shipments);
   await db.delete(schema.shippingRates);
   await db.delete(schema.storeToCarriers);
   await db.delete(schema.carriers);
@@ -366,6 +404,7 @@ const seed = async () => {
     }
 
     // Stores
+    const carriers: (typeof schema.carriers.$inferSelect)[] = [];
     const stores: (typeof schema.stores.$inferSelect)[] = [];
     for (const user of users.slice(0, 5)) {
       const store = generateStore(user.id);
@@ -373,15 +412,32 @@ const seed = async () => {
         .insert(schema.stores)
         .values(store)
         .returning();
+      stores.push(storeResult[0]);
+      const tempCarriers = Array.from(
+        { length: faker.number.int({ min: 2, max: 4 }) },
+        () => generateCarrier()
+      );
       const carrierResult = await db
         .insert(schema.carriers)
-        .values(generateCarrier())
+        .values(tempCarriers)
         .returning();
-      stores.push(storeResult[0]);
-      await db.insert(schema.storeToCarriers).values({
-        storeId: storeResult[0].id,
-        carrierId: carrierResult[0].id,
-      });
+      carriers.push(...carrierResult);
+      const tempShippingRates = Array.from(
+        { length: tempCarriers.length },
+        (_, ind) => generateShippingRate(tempCarriers[ind].id)
+      );
+      const shippingRateResult = await db
+        .insert(schema.shippingRates)
+        .values(tempShippingRates)
+        .returning();
+      const tempStoreToCarriers = Array.from(
+        { length: tempCarriers.length },
+        (_, ind) => ({
+          storeId: storeResult[0].id,
+          carrierId: carrierResult[ind].id,
+        })
+      );
+      await db.insert(schema.storeToCarriers).values(tempStoreToCarriers);
     }
 
     const discounts: (typeof schema.discounts.$inferSelect)[] = [];
@@ -562,6 +618,14 @@ const seed = async () => {
             shippingAddressId: faker.helpers.arrayElement(addresses).id,
           })
           .returning();
+        await db
+          .insert(schema.shipments)
+          .values(
+            generateShipment(
+              orderToStoreResult[0].id,
+              faker.helpers.arrayElement(carriers).id
+            )
+          );
         const orderItems: (typeof schema.orderItems.$inferSelect)[] = [];
         for (let j = 0; j < faker.number.int({ min: 1, max: 5 }); j++) {
           orderItems.push(
@@ -574,11 +638,23 @@ const seed = async () => {
         }
         await db.insert(schema.orderItems).values(orderItems);
       }
-
-      // adding admin user
-      await db.insert(schema.users).values(await generateUser('ADMIN'));
     }
-    console.log(users[0]);
+    const admin_user = await db
+      .insert(schema.users)
+      .values(await generateUser('ADMIN'))
+      .returning();
+    users.push(admin_user[0]);
+    console.log('Database seeded successfully');
+    const adminUsers = users.filter((u) => u.role === 'ADMIN');
+    const storeOwnerUsers = users.filter((u) => u.role === 'STORE_OWNER');
+    const registeredUserInfo = {
+      adminUsers,
+      storeOwnerUsers,
+    };
+    fs.writeFileSync(
+      join(__dirname, 'seed_cached_data', 'registered_user_info.json'),
+      JSON.stringify(registeredUserInfo, null, 2)
+    );
   } catch (error) {
     console.error('Error seeding database:', error);
   } finally {

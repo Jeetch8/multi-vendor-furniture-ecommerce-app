@@ -70,3 +70,38 @@ export const createEditNewProductSchema = z.object({
     )
     .min(1, 'At least one attribute is required'),
 });
+
+export const createNewCarrierSchema = z
+  .object({
+    name: z.string().min(1, 'Carrier name is required'),
+    code: z.string(),
+    url: z
+      .string()
+      .optional()
+      .refine((val) => !val || /^https?:\/\/[^\s$.?#].[^\s]*$/.test(val), {
+        message: 'Invalid URL format for Base Tracking URL',
+      }),
+    shipping_rate_name: z.string().min(1, 'Shipping Rate Name is required'),
+    shipping_rate_description: z.string().optional(),
+    base_rate: z.coerce
+      .number()
+      .positive('Base Rate must be a valid positive number'),
+    per_kg_rate: z.coerce
+      .number()
+      .positive('Per Kg Rate must be a valid positive number'),
+    min_weight: z.coerce
+      .number()
+      .positive('Min Weight must be a valid positive number'),
+    max_weight: z.coerce
+      .number()
+      .positive('Max Weight must be a valid positive number'),
+  })
+  .superRefine((values, ctx) => {
+    if (values.max_weight < values.min_weight) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['max_weight'],
+        message: 'Max Weight must be greater than or equal to Min Weight',
+      });
+    }
+  });
