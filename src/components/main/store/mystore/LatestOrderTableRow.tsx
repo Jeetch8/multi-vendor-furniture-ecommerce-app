@@ -11,6 +11,7 @@ import {
   formatDateSecondary,
 } from '@/utils/helpers';
 import { TOrderWithDetails } from '@/types';
+import { orderStatusEnum } from '@/lib/schema';
 
 function LatestOrderTableRow({ order }: { order: TOrderWithDetails['order'] }) {
   const products = order.orderItems.flatMap((item) => ({
@@ -51,7 +52,7 @@ function LatestOrderTableRow({ order }: { order: TOrderWithDetails['order'] }) {
       <TableCell>
         <div
           className={`inline-block rounded-3xl border px-[7px] py-[4px] ${
-            orderStatusColors[order.orderStatus!]
+            orderStatusColors[order.orderStatus as orderStatusEnum]
           } text-xs font-semibold`}
         >
           {capitalizeOnlyFirstLetter(order.orderStatus!)}

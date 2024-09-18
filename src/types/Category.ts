@@ -32,3 +32,12 @@ export type TCategoryForProduct = InferQueryModel<
     };
   }
 >;
+
+export type TProductToCategoryWithCategory = InferQueryModel<
+  'categoryToProductMap',
+  {
+    with: {
+      category: true;
+    };
+  }
+>;

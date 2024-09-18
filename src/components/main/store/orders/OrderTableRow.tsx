@@ -12,6 +12,7 @@ import {
 import { TableCell, TableRow } from '@/components//ui/table';
 import { orderStatusColors } from '@/lib/constants';
 import { ProductPriceDisplay } from '@/components/shared/ui';
+import { orderStatusEnum } from '@/lib/schema';
 
 type OrderTableRowType = {
   orderToStores: TOrderforOrdersTable;
@@ -100,7 +101,7 @@ function OrderTableRow({ orderToStores, index }: OrderTableRowType) {
       <TableCell>
         <div
           className={`inline-block rounded-3xl border px-[7px] py-[4px] ${
-            orderStatusColors[order.orderStatus!]
+            orderStatusColors[order.orderStatus as orderStatusEnum]
           } text-xs font-semibold`}
         >
           {capitalizeOnlyFirstLetter(order.orderStatus!)}

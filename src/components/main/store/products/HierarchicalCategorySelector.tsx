@@ -70,6 +70,7 @@ const HierarchicalCategorySelector = ({
       }
     };
     if (selectedCategories.length > 0) fetchSubCategories();
+    // eslint-disable-next-line
   }, [selectedCategories]);
 
   return (

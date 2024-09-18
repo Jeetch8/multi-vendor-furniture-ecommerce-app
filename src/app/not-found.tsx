@@ -11,8 +11,8 @@ export default function NotFound() {
         <div className="flex flex-col justify-center gap-4">
           <h2 className="text-4xl font-bold">Oops! Page not found</h2>
           <p className="text-muted-foreground max-w-xl">
-            We're sorry, but the page you are looking for doesn't exist or has
-            been moved. We apologize for the inconvenience!
+            {`We're sorry, but the page you are looking for doesn't exist or has
+            been moved. We apologize for the inconvenience!`}
           </p>
           <Button
             el="anchor"

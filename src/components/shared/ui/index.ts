@@ -23,3 +23,5 @@ export { default as Search } from './Search';
 export { default as Box } from './Box';
 export { default as Pagination } from './Pagination';
 export { default as Filter } from './Filter';
+export { default as FormSelectInput } from './FormSelectInput';
+export { default as DatePicker } from './DatePicker';

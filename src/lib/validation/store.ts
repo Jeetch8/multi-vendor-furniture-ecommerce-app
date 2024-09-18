@@ -105,3 +105,19 @@ export const createNewCarrierSchema = z
       });
     }
   });
+
+export const createNewDiscountSchema = z.object({
+  name: z.string().min(10),
+  description: z.string().min(20),
+  discountPercent: z.coerce.number().min(1).max(101),
+  categoryId: z.string().optional(),
+  productId: z.string().optional(),
+  date: z
+    .object({
+      from: z.coerce.date().min(new Date()),
+      to: z.coerce.date().min(new Date()),
+    })
+    .refine((data) => data.from < data.to, {
+      message: 'The end date must be later than the start date.',
+    }),
+});
