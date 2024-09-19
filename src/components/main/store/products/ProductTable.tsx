@@ -18,7 +18,6 @@ const productTableHeads = [
   { value: 'category', label: 'Category', sortable: false },
   { value: 'rating', label: 'Rating' },
   { value: 'price', label: 'Price', sortable: true },
-  { value: 'favorites', label: 'Favorites', sortable: true },
   { value: 'brand', label: 'Brand', sortable: true },
   { value: 'created_at', label: 'Created', sortable: true },
   { value: 'updated_at', label: 'Updated', sortable: true },

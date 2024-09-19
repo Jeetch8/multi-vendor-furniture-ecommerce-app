@@ -1,7 +1,6 @@
 import {
   and,
   asc,
-  desc,
   eq,
   getTableColumns,
   ilike,
@@ -13,13 +12,8 @@ import {
 import { db } from '../db';
 import * as schema from '../schema';
 import { auth } from '../auth';
-import {
-  TOrderForMyOrders,
-  TOrderforOrdersTable,
-  TOrderWithDetails,
-} from '@/types/Order';
-import { count } from 'console';
-import { promises } from 'dns';
+import { TOrderForMyOrders, TOrderforOrdersTable } from '@/types/Order';
+import { getColStringForJSONBuildObj, jsonBuildObject } from '../utils';
 
 export const fetchOrdersByUser = async (
   id: string
@@ -163,13 +157,17 @@ export const fetchOrdersForOrdersTable = async ({
         ...getTableColumns(schema.ordersToStore),
         order: {
           ...getTableColumns(schema.orders),
-          user: getTableColumns(schema.users),
+          user: jsonBuildObject(getTableColumns(schema.users)),
         },
         shipment: { ...getTableColumns(schema.shipments) },
         shippingAddress: { ...getTableColumns(schema.addresses) },
         store: { ...getTableColumns(schema.stores) },
-        orderItems: sql`json_agg(json_build_object( 'id', order_item.id , 'quantity', order_item.quantity, 'price', order_item.price, 'selectedAttributes', order_item.selected_attributes, 'createdAt', order_item.created_at, 'updatedAt', order_item.updated_at, 
-        'product', product))`,
+        orderItems: sql`json_agg(json_build_object( ${sql.raw(
+          getColStringForJSONBuildObj(
+            getTableColumns(schema.orderItems),
+            'order_item'
+          )
+        )} , 'product', product))`,
       })
       .from(schema.ordersToStore)
       .where(

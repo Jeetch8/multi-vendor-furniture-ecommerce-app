@@ -36,34 +36,60 @@ export const getTopSellingCategoriesByStore = async (storeId: string) => {
 
 export async function fetchCategories(term?: string) {
   try {
-    const whereArr = [eq(schema.categories.isActive, true)];
-    const query = db
-      .select()
-      .from(schema.categories)
-      .where(and(...whereArr))
-      .leftJoin(
-        schema.products,
-        eq(schema.categories.parentId, schema.categories.id)
-      )
-      .leftJoin(schema.stores, eq(schema.products.storeId, schema.stores.id))
-      .leftJoin(
-        schema.productAttributes,
-        eq(schema.products.id, schema.productAttributes.productId)
-      )
-      .leftJoin(
-        schema.categoryToProductMap,
-        eq(schema.categoryToProductMap.categoryId, schema.categories.id)
-      )
-      .leftJoin(
-        schema.attributeCategory,
-        eq(schema.categoryToProductMap.categoryId, schema.attributeCategory.id)
-      );
-    if (term && term !== 'all') {
-      whereArr.push(eq(schema.categories.name, term));
-    }
-    const res = await query;
+    // const whereArr = [eq(schema.categories.isActive, true)];
+    // const query = db
+    //   .select()
+    //   .from(schema.categories)
+    //   .where(and(...whereArr))
+    //   .leftJoin(
+    //     schema.products,
+    //     eq(schema.categories.parentId, schema.categories.id)
+    //   )
+    //   .leftJoin(schema.stores, eq(schema.products.storeId, schema.stores.id))
+    //   .leftJoin(
+    //     schema.productAttributes,
+    //     eq(schema.products.id, schema.productAttributes.productId)
+    //   )
+    //   .leftJoin(
+    //     schema.categoryToProductMap,
+    //     eq(schema.categoryToProductMap.categoryId, schema.categories.id)
+    //   )
+    //   .leftJoin(
+    //     schema.attributeCategory,
+    //     eq(schema.categoryToProductMap.categoryId, schema.attributeCategory.id)
+    //   );
+    // if (term && term !== 'all') {
+    //   whereArr.push(eq(schema.categories.name, term));
+    // }
+    // const res = await query;
 
-    return res as [];
+    // return res;
+
+    const query = await db.query.categories.findMany({
+      where: and(
+        term && term !== 'all'
+          ? ilike(schema.categories.name, `%${term}%`)
+          : undefined
+      ),
+      with: {
+        subCategories: {
+          with: {
+            products: true,
+          },
+        },
+        products: true,
+        categoryToAttributeCategory: {
+          with: {
+            attributeCategory: {
+              with: {
+                productAttributes: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return query;
   } catch {
     throw new Error("Couldn't fetch categories");
   }

@@ -82,7 +82,6 @@ function CustomTableRow({
       <TableCell className="text-center">
         <ProductPriceDisplay product={product} />
       </TableCell>
-      <TableCell className="text-center">{product.favorite_count!}</TableCell>
       <TableCell>{product.brand}</TableCell>
       <TableCell>
         <HoverCard openDelay={200}>

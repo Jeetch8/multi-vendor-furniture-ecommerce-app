@@ -429,15 +429,83 @@ export const fetchProductsByStoreId = async ({
           : undefined,
       limit: itemsPerPage ? itemsPerPage : undefined,
       orderBy(fields, operators) {
-        return operators.desc(fields.createdAt);
+        if (sortBy?.sort === 'total_price') {
+          return [
+            operators[sortBy.order as 'asc' | 'desc'](
+              fields[sortBy.sort as keyof TProduct]
+            ),
+          ];
+        } else {
+          return [operators.desc(fields.createdAt)];
+        }
       },
     });
-
+    // const productDiscountSchema = aliasedTable(
+    //   schema.discounts,
+    //   'product_discount'
+    // );
+    // const tempQuery = await db
+    //   .select({
+    //     ...getTableColumns(schema.products),
+    //     images: sql<schema.TProductImage>`json_agg(${schema.productImages})`,
+    //     categoryToProducts: sql<
+    //       (schema.TCategoriesToProductsMap & {
+    //         category: schema.TCategory & { discount: schema.TDiscount };
+    //       })[]
+    //     >`json_agg(json_build_object( ${sql.raw(
+    //       getColStringForJSONBuildObj(
+    //         getTableColumns(schema.categoryToProductMap),
+    //         'category_to_product'
+    //       )
+    //     )} , 'category' , json_build_object( ${sql.raw(
+    //       getColStringForJSONBuildObj(
+    //         getTableColumns(schema.categories),
+    //         'category'
+    //       )
+    //     )} , 'discount' , discount )))`,
+    //     discount: productDiscountSchema,
+    //     reviews: sql<schema.TReview[]>`json_agg(${schema.reviews})`,
+    //     attributes: sql<
+    //       schema.TProductAttribute[]
+    //     >`json_agg(${schema.productAttributes})`,
+    //   })
+    //   .from(schema.products)
+    //   .leftJoin(
+    //     schema.productImages,
+    //     eq(schema.productImages.productId, schema.products.id)
+    //   )
+    //   .leftJoin(
+    //     schema.categoryToProductMap,
+    //     eq(schema.products.id, schema.categoryToProductMap.productId)
+    //   )
+    //   .leftJoin(
+    //     schema.categories,
+    //     eq(schema.categoryToProductMap.categoryId, schema.categories.id)
+    //   )
+    //   .leftJoin(
+    //     schema.discounts,
+    //     eq(schema.categories.discountId, schema.discounts.id)
+    //   )
+    //   .leftJoin(
+    //     productDiscountSchema,
+    //     eq(schema.products.discountId, productDiscountSchema.id)
+    //   )
+    //   .leftJoin(
+    //     schema.productAttributes,
+    //     eq(schema.products.id, schema.productAttributes.productId)
+    //   )
+    //   .leftJoin(
+    //     schema.reviews,
+    //     eq(schema.products.id, schema.reviews.productId)
+    //   )
+    //   .where(eq(schema.products.storeId, storeId))
+    //   .groupBy(schema.products.id, productDiscountSchema.id)
+    //   .limit(10);
     const countOfProducts = await db
       .select({ count: count() })
       .from(products)
       .where(and(or(...whererArr), eq(products.storeId, storeId)));
-    return { countOfProducts: countOfProducts[0].count || 0, products: query };
+    return { countOfProducts: countOfProducts[0].count ?? 0, products: query };
   } catch (error) {
     console.error('Error fetching products:', error);
     return { countOfProducts: 0, products: [] };

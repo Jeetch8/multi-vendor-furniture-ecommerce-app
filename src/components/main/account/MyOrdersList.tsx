@@ -12,7 +12,7 @@ async function MyOrdersList() {
     <section className="flex flex-col gap-6">
       {orders.map((order, index) => (
         <>
-          <OrderItem key={order.id} order={order} />
+          <OrderItem key={order.id + index} order={order} />
         </>
       ))}
     </section>

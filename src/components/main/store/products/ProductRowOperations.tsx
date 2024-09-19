@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { TCategoryForSidebar, TProductForTable } from '@/types';
+import { TProductForTable } from '@/types';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdOutlineDelete, MdOutlineModeEdit } from 'react-icons/md';
 import NewProductUpdateForm from './NewProductUpdateForm';
