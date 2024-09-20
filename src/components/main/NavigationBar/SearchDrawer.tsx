@@ -18,10 +18,22 @@ interface SearchDrawerProps {
 }
 
 const popularSearches = [
-  '3 Seater Sofa',
-  'Double Bed',
-  'Dining Table',
-  'Coffee Table',
+  {
+    title: '3 Seater Sofa',
+    slug: '3-seater-sofa',
+  },
+  {
+    title: 'Double Bed',
+    slug: 'double-bed',
+  },
+  {
+    title: 'Dining Table',
+    slug: 'dining-table',
+  },
+  {
+    title: 'Coffee Table',
+    slug: 'Coffee Table',
+  },
 ];
 
 const categoryCards = [
@@ -44,7 +56,7 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const router = useRouter();
-  const { get, loading, error, data } = useFetch<TProductCard[]>(
+  const { get, data } = useFetch<TProductCard[]>(
     `/api/search?searchQuery=${searchTerm}`
   );
 
@@ -67,14 +79,15 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="right" className="w-full sm:max-w-xl">
-        <div className="h-full flex flex-col">
+        <div className="text-primary mt-4">
           <form onSubmit={handleSearch} className="relative">
             <input
+              autoFocus={true}
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search products..."
-              className="w-full pl-10 pr-4 py-3 border-b border-gray-200 focus:outline-none"
+              className="w-full pl-10 pr-4 py-3 focus:outline-none border-none shadow-none outline-none"
             />
             <LuSearch className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
           </form>
@@ -86,12 +99,12 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
                 <div className="flex flex-wrap gap-2">
                   {popularSearches.map((term) => (
                     <Link
-                      key={term}
-                      href={`/search?query=${encodeURIComponent(term)}`}
+                      key={term.slug}
+                      href={`/search?query=${encodeURIComponent(term.slug)}`}
                       onClick={onClose}
-                      className="px-4 py-2 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors"
+                      className="px-4 py-2 bg-secondary rounded-full text-sm hover:bg-gray-200 transition-colors"
                     >
-                      {term}
+                      {term.title}
                     </Link>
                   ))}
                 </div>
@@ -151,7 +164,7 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
                         src={product.images[0].url}
                         alt={product.name}
                         fill
-                        className="object-cover transition-transform group-hover:scale-105"
+                        className="object-cover transition-transform group-hover:scale-105 duration-500"
                       />
                     </div>
                     <div className="mt-2">

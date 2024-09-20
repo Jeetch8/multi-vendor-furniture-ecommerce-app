@@ -12,7 +12,9 @@ import Link from 'next/link';
 function SignInPage() {
   return (
     <div
-      className={cn('flex flex-col gap-6 shadow-md rounded-xl overflow-hidden')}
+      className={cn(
+        'flex flex-col gap-6 shadow-md rounded-xl overflow-hidden bg-background'
+      )}
     >
       <Card>
         <CardHeader className="text-center">

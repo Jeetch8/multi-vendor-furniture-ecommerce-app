@@ -18,12 +18,14 @@ import { useSession } from 'next-auth/react';
 import Logo from './Logo';
 import { navbarCategories, navbarCollections } from '@/utils/mockData';
 import CartDrawer from '@/components/main/NavigationBar/CartDrawer';
-import { TCategoryWithSubCategories } from '@/types';
 
 export const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
   },
   exit: {
     opacity: 0,
@@ -34,7 +36,7 @@ export const containerVariants = {
 };
 
 export const itemVariants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
@@ -44,11 +46,7 @@ export const itemVariants = {
   },
 };
 
-const Navbar = ({
-  categories,
-}: {
-  categories: TCategoryWithSubCategories[];
-}) => {
+const Navbar = () => {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isCollectionsOpen, setIsCollectionsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -62,27 +60,25 @@ const Navbar = ({
 
   return (
     <>
-      <div className="sticky top-0 z-50 bg-background border-b border-gray-custom-2">
+      <div className="sticky top-0 z-50 bg-white border-b border-gray-custom-2">
         <Container className="px-6 2xl:px-0">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between py-4">
             <Logo />
 
             <div className="hidden md:flex items-center gap-6 text-lg">
               <div
-                className="py-4"
                 onMouseEnter={() => setIsShopOpen(true)}
                 onMouseLeave={() => setIsShopOpen(false)}
               >
                 <LinkUnderlined href="/products">SHOP</LinkUnderlined>
               </div>
               <div
-                className="py-4"
                 onMouseEnter={() => setIsCollectionsOpen(true)}
                 onMouseLeave={() => setIsCollectionsOpen(false)}
               >
                 <LinkUnderlined href="/">COLLECTIONS</LinkUnderlined>
               </div>
-              <div className="flex items-center gap-1 py-4">
+              <div className="flex items-center gap-1">
                 <LuSearch size={20} />
                 <button
                   onClick={() => setIsSearchOpen(true)}
@@ -92,7 +88,7 @@ const Navbar = ({
                 </button>
               </div>
               <UserDisplay />
-              <div className="flex items-center gap-1 py-4">
+              <div className="flex items-center gap-1">
                 <LuShoppingBag size={20} />
                 <button
                   onClick={() => setIsCartOpen(true)}
@@ -106,7 +102,7 @@ const Navbar = ({
               <Hamburger
                 toggled={isMobileMenuOpen}
                 toggle={setIsMobileMenuOpen}
-                color={'hsl(var(--primary))'}
+                color="#000"
                 label="Menu"
                 size={24}
                 distance="sm"
@@ -120,7 +116,10 @@ const Navbar = ({
 
         <AnimatePresence>
           {isShopOpen && (
-            <ShopMenu categories={categories} setIsShopOpen={setIsShopOpen} />
+            <ShopMenu
+              categories={navbarCategories}
+              setIsShopOpen={setIsShopOpen}
+            />
           )}
 
           {isCollectionsOpen && (

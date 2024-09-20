@@ -36,6 +36,7 @@ export const products = pgTable(
     brand: text('brand').notNull(),
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
+    tags: text('tags').notNull(),
   },
   (table) => ({
     storeNameIdx: uniqueIndex('store_name_idx').on(table.storeId, table.name),

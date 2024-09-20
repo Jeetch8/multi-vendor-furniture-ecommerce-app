@@ -4,10 +4,8 @@ import {
   MdOutlineShoppingCart,
   MdOutlineDiscount,
 } from 'react-icons/md';
-
 import { HiOutlineTruck } from 'react-icons/hi2';
 import SecondaryTopNavigation from '@/components/main/account/SecondaryTopNavigation';
-import { fetchCategories } from '@/lib/services/category';
 
 const navLinks = [
   {
@@ -48,7 +46,6 @@ const navLinks = [
 ];
 
 async function Layout({ children }: { children: React.ReactNode }) {
-  const categories = await fetchCategories();
   return (
     <div>
       <div>
