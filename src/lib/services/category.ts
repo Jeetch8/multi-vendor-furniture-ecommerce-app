@@ -84,7 +84,11 @@ export async function fetchCategories(term?: string) {
       with: {
         subCategories: {
           with: {
-            products: true,
+            products: {
+              with: {
+                product: true
+              }
+            },
           },
         },
         products: true,

@@ -10,15 +10,30 @@ export type TCategoryWithSubCategories = InferQueryModel<
   { with: { subCategories: true } }
 >;
 
+export type TCategoryForContext = InferQueryModel<"categories", {
+  with: {
+    categoryToAttributeCategory: {
+      with: {
+        attributeCategory: true
+      }
+    },
+    subCategories: true
+  }
+}>
+
+
 export type TCategoryForProduct = InferQueryModel<
   'categories',
   {
     with: {
-      subCategories: true;
-      products: {
+      subCategories: {
         with: {
-          product: true;
-        };
+          products: {
+            with: {
+              product: true;
+            };
+          };
+        }
       };
       categoryToAttributeCategory: {
         with: {

@@ -115,7 +115,8 @@ function ProductShow({ product, storeRating }: ProductProps) {
       setIsFavorite(!newFavoriteState);
       toast.error('An unexpected error occurred');
     }
-  }, [user, router, isFavorite]);
+  }, [user, router, isFavorite, product?.id, product?.slug]);
+
   const handleAddToCart = async () => {
     if (!user) {
       toast.error('You must be signed in to do this.');
@@ -191,9 +192,8 @@ function ProductShow({ product, storeRating }: ProductProps) {
                   className="h-8 w-8 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-50 shadow-sm group"
                 >
                   <IoMdHeart
-                    className={`h-6 w-6 transition-colors duration-300 group-hover:text-black ${
-                      isFavorite ? 'text-black' : 'text-gray-300'
-                    }`}
+                    className={`h-6 w-6 transition-colors duration-300 group-hover:text-black ${isFavorite ? 'text-black' : 'text-gray-300'
+                      }`}
                   />
                 </button>
               </h3>
@@ -253,5 +253,7 @@ function ProductShow({ product, storeRating }: ProductProps) {
     </div>
   );
 }
+
+ProductShow.displayName = 'ProductShow';
 
 export default ProductShow;

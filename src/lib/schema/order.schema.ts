@@ -40,9 +40,11 @@ export const orders = pgTable('order', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   couponId: text('coupon_id').references(() => coupons.id),
-  orderNo: text('order_no').notNull().unique(),
+  orderNo: text('order_no').notNull(),
   totalPrice: numeric('total_price', { scale: 2 }).notNull(),
-  orderStatus: orderStatusEnumSchema('order_status').default('PENDING'),
+  orderStatus: orderStatusEnumSchema('order_status')
+    .default('PENDING')
+    .notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });

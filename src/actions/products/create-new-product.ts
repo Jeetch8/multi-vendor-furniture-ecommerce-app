@@ -89,15 +89,14 @@ const createNewProduct = async (
   let product: schema.TProduct[];
 
   try {
-    product = await db
-      .insert(schema.products)
-      .values({
-        ...productFields,
-        storeId: store.id,
-        slug: slug,
-        price: String(productFields.price),
-      })
-      .returning();
+    const toInsertData: typeof schema.products.$inferInsert = {
+      ...productFields,
+      storeId: store.id,
+      slug: slug,
+      price: String(productFields.price),
+      tags: '',
+    };
+    product = await db.insert(schema.products).values(toInsertData).returning();
     await db.insert(schema.productImages).values(
       images.map((img, ind) => ({
         url: img,

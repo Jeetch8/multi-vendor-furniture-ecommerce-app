@@ -99,6 +99,7 @@ const editProduct = async (
     slug,
     price: String(restFields.price),
     storeId: user.store.id,
+    tags: '',
   };
 
   let updatedProduct;

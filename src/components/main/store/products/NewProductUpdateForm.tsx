@@ -18,10 +18,19 @@ import AttributeInput from './AttributeInput';
 import HierarchicalCategorySelector from './HierarchicalCategorySelector';
 import { toast } from 'react-hot-toast';
 import { TProductImage } from '@/lib/schema';
-import { TCategoryForProduct } from '@/types/Category';
+import { InferQueryModel } from '@/utils/QueryTypesBuilder';
 
 type NewProductFormProps = {
-  categoriesData: TCategoryForProduct[];
+  categoriesData: InferQueryModel<"categories", {
+    with: {
+      categoryToAttributeCategory: {
+        with: {
+          attributeCategory: true
+        }
+      },
+      subCategories: true
+    }
+  }>[];
   productToEdit?: TProductForTable;
 };
 
@@ -87,16 +96,16 @@ function NewProductUpdateForm({
   const [formState, action] = useFormState(
     isEditMode
       ? actions.editProduct.bind(null, {
-          images: uploadedImagesUrls,
-          categories: selectedCategories,
-          productId: productToEdit.id,
-          attributes: attributeFormatter(productAttributes),
-        })
+        images: uploadedImagesUrls,
+        categories: selectedCategories,
+        productId: productToEdit.id,
+        attributes: attributeFormatter(productAttributes),
+      })
       : actions.createNewProduct.bind(null, {
-          images: uploadedImagesUrls,
-          categories: selectedCategories,
-          attributes: attributeFormatter(productAttributes),
-        }),
+        images: uploadedImagesUrls,
+        categories: selectedCategories,
+        attributes: attributeFormatter(productAttributes),
+      }),
     {
       errors: {},
     }

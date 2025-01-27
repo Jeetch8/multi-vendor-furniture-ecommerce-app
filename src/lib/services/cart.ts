@@ -17,8 +17,10 @@ export const fetchCartByUser = unstable_cache(
                   images: true,
                   discount: {
                     with: {
-                      categories: true,
-                      products: true,
+                      category: true,
+                      // categories: true,
+                      product: true
+                      // products: true,
                     },
                   },
                   store: true,

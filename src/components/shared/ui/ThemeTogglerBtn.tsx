@@ -10,6 +10,7 @@ const ThemeToggler = memo(() => {
     if (theme === 'dark') {
       setTheme('light');
     } else setTheme('dark');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme]);
 
   return (
@@ -66,5 +67,7 @@ const ThemeToggler = memo(() => {
     </div>
   );
 });
+
+ThemeToggler.displayName = 'ThemeToggler';
 
 export default ThemeToggler;

@@ -18,13 +18,23 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdOutlineDelete, MdOutlineModeEdit } from 'react-icons/md';
 import NewProductUpdateForm from './NewProductUpdateForm';
 import { TCategoryForProduct } from '@/types/Category';
+import { InferQueryModel } from '@/utils/QueryTypesBuilder';
 
 function ProductRowOperations({
   product,
   categories,
 }: {
   product: TProductForTable;
-  categories: TCategoryForProduct[];
+  categories: InferQueryModel<"categories", {
+    with: {
+      categoryToAttributeCategory: {
+        with: {
+          attributeCategory: true
+        }
+      },
+      subCategories: true
+    }
+  }>[];
 }) {
   const handleClick = async () => {
     const formState = await deleteProduct(product.id, {});

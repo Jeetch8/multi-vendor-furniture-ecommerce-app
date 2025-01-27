@@ -10,11 +10,19 @@ import {
 } from '@/components/ui/select';
 import { TProductForTable } from '@/types';
 import { SelectedCategories } from './NewProductUpdateForm';
-import { TCategoryForProduct } from '@/types/Category';
+import { InferQueryModel } from '@/utils/QueryTypesBuilder';
 
 type AttributeInputProps = {
   selectedCategories: SelectedCategories[];
-  categoriesData: TCategoryForProduct[];
+  categoriesData: InferQueryModel<"categories", {
+    with: {
+      categoryToAttributeCategory: {
+        with: {
+          attributeCategory: true
+        }
+      }
+    }
+  }>[];
   onAttributesChange: (attributes: { [key: string]: string }) => void;
   productToEdit?: TProductForTable;
 };

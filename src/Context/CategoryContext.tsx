@@ -1,10 +1,10 @@
 'use client';
 
 import React, { createContext, ReactNode, useContext } from 'react';
-import { TCategoryWithSubCategories } from '@/types/Category';
+import { TCategoryForContext, TCategoryWithSubCategories } from '@/types/Category';
 
 interface CategoriesContextType {
-  categories: TCategoryWithSubCategories[];
+  categories: TCategoryForContext[];
 }
 
 const CategoriesContext = createContext<CategoriesContextType | undefined>(
@@ -13,7 +13,7 @@ const CategoriesContext = createContext<CategoriesContextType | undefined>(
 
 export const CategoriesProvider: React.FC<{
   children: ReactNode;
-  categories: TCategoryWithSubCategories[];
+  categories: TCategoryForContext[];
 }> = ({ children, categories }) => {
   return (
     <CategoriesContext.Provider value={{ categories }}>
@@ -21,6 +21,7 @@ export const CategoriesProvider: React.FC<{
     </CategoriesContext.Provider>
   );
 };
+
 
 export const useCategories = () => {
   const context = useContext(CategoriesContext);

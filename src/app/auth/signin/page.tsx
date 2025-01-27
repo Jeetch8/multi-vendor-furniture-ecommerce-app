@@ -8,6 +8,8 @@ import {
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function SignInPage() {
   return (
@@ -24,7 +26,9 @@ function SignInPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm />
+          <Suspense fallback={<Skeleton className='h-[500px]' />}>
+            <LoginForm />
+          </Suspense>
           <div className="text-center text-sm mt-4">
             Don&apos;t have an account?{' '}
             <Link href="/auth/signup" className="underline underline-offset-4">

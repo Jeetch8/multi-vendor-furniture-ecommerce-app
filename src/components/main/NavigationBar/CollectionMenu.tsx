@@ -61,4 +61,6 @@ const CollectionMenu = memo(
   }
 );
 
+CollectionMenu.displayName = 'CollectionMenu';
+
 export default CollectionMenu;
