@@ -21,7 +21,9 @@ function Input({ label, id, view, className, error, ...props }: InputProps) {
   return (
     <label
       className={cn(
-        `flex w-full ${isRadio && 'items-center'} ${view === 'row' ? 'flex-row' : 'flex-col'} gap-2`,
+        `flex w-full ${isRadio && 'items-center'} ${
+          view === 'row' ? 'flex-row' : 'flex-col'
+        } gap-2`,
         className
       )}
       htmlFor={id}
@@ -45,7 +47,7 @@ function Input({ label, id, view, className, error, ...props }: InputProps) {
           {...props}
           disabled={pending}
           className={cn(
-            'rounded-md border bg-gray-50 p-2 outline-none focus:border-gray-300 focus:bg-gray-100',
+            'rounded-md border bg-secondary p-2 outline-none focus:border-gray-300 focus:bg-secondary',
             pending ? 'opacity-60' : '',
             className
           )}

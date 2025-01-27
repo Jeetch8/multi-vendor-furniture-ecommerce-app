@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { and, eq, ilike, sql } from 'drizzle-orm';
+import { and, eq, ilike, isNull, sql } from 'drizzle-orm';
 import * as schema from '@/lib/schema';
 
 export const getTopSellingCategoriesByStore = async (storeId: string) => {
@@ -32,6 +32,16 @@ export const getTopSellingCategoriesByStore = async (storeId: string) => {
   );
   const sortedCategoryArr = categoryArr.sort((a, b) => b.quantity - a.quantity);
   return sortedCategoryArr.slice(0, 5);
+};
+
+export const fetchAllCategoriesForNavbar = async () => {
+  const query = await db.query.categories.findMany({
+    where: isNull(schema.categories.parentId),
+    with: {
+      subCategories: true,
+    },
+  });
+  return query;
 };
 
 export async function fetchCategories(term?: string) {
@@ -74,7 +84,11 @@ export async function fetchCategories(term?: string) {
       with: {
         subCategories: {
           with: {
-            products: true,
+            products: {
+              with: {
+                product: true
+              }
+            },
           },
         },
         products: true,

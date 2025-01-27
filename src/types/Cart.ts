@@ -12,8 +12,8 @@ export type TCartWithDetails = InferQueryModel<
               store: true;
               discount: {
                 with: {
-                  categories: true;
-                  products: true;
+                  category: true,
+                  product: true
                 };
               };
               attributes: {

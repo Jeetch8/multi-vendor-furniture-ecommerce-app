@@ -11,6 +11,7 @@ import {
   attributeCategoryArr,
   categoriesWithSubCategoriesArr,
   productAttributesArr,
+  productTags,
 } from './fakeData';
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
@@ -183,6 +184,7 @@ const generateProduct = (
     slug: faker.helpers.slugify(name).toLowerCase() + '-' + createId(),
     status: true,
     brand: faker.company.name(),
+    tags: faker.helpers.arrayElement(productTags),
     createdAt: new Date(),
     updatedAt: new Date(),
   };

@@ -14,7 +14,6 @@ const categoryTableHeads = [
 
 async function CategoriesTable() {
   const categories = await fetchCategories();
-  console.log(categories);
 
   return (
     <div>

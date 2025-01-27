@@ -89,8 +89,9 @@ function ApplicationForm() {
             }}
           />
           <div className="flex flex-col gap-2">
-            {uploadedImage.map((image) => (
+            {uploadedImage.map((image, ind) => (
               <Image
+                key={'preview-image-' + ind}
                 src={image}
                 alt="uploaded image"
                 width={100}

@@ -49,11 +49,11 @@ export async function fetchProductsForList(
       const maxPriceNum = Number(maxPrice);
 
       if (!isNaN(minPriceNum)) {
-        productsWhereArr.push(gte(sql<number>`products.price`, minPriceNum));
+        productsWhereArr.push(gte(products.price, String(minPriceNum)));
       }
 
       if (!isNaN(maxPriceNum)) {
-        productsWhereArr.push(lte(sql<number>`products.price`, maxPriceNum));
+        productsWhereArr.push(lte(products.price, String(maxPriceNum)));
       }
     }
 

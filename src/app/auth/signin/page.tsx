@@ -8,11 +8,15 @@ import {
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function SignInPage() {
   return (
     <div
-      className={cn('flex flex-col gap-6 shadow-md rounded-xl overflow-hidden')}
+      className={cn(
+        'flex flex-col gap-6 shadow-md rounded-xl overflow-hidden bg-background'
+      )}
     >
       <Card>
         <CardHeader className="text-center">
@@ -22,7 +26,9 @@ function SignInPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm />
+          <Suspense fallback={<Skeleton className='h-[500px]' />}>
+            <LoginForm />
+          </Suspense>
           <div className="text-center text-sm mt-4">
             Don&apos;t have an account?{' '}
             <Link href="/auth/signup" className="underline underline-offset-4">

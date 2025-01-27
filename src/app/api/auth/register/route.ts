@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { hash } from 'bcrypt';
+import { hash } from 'bcryptjs';
 import { z } from 'zod';
 import { createUser, getUserByEmail } from '@/lib/services/user';
 import { generateFromEmail } from 'unique-username-generator';

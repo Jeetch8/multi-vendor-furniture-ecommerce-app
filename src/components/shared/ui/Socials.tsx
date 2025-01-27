@@ -26,7 +26,7 @@ function Socials({ type }: { type: 'login' | 'signup' }) {
   const title = type === 'login' ? 'Login' : 'Signup';
 
   return (
-    <div className="flex flex-col justify-evenly gap-4">
+    <div className="flex flex-col justify-evenly gap-4 bg-background">
       <div className="flex flex-col gap-4">
         <Button
           type="button"

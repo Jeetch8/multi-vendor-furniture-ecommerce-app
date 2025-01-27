@@ -1,6 +1,5 @@
 'use client';
 
-import { TProduct, TProductImage } from '@/lib/schema';
 import {
   Carousel,
   CarouselContent,
@@ -13,6 +12,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { memo } from 'react';
 import { TProductCard } from '@/types/Product';
+import { calculatePriceWithDiscounts } from '@/utils/helpers';
 
 interface ProductCardProps {
   product: TProductCard;
@@ -22,6 +22,9 @@ interface ProductCardProps {
 
 const ProductCard = memo(
   ({ product, className, imgClass }: ProductCardProps) => {
+
+    const priceWithDiscount = calculatePriceWithDiscounts(product);
+
     return (
       <div className={cn('group h-full w-full duration-300', className)}>
         <div className="relative aspect-square">
@@ -60,7 +63,7 @@ const ProductCard = memo(
           </div>
           <div className="flex items-center justify-between">
             <p className="text-lg font-semibold">
-              ${product?.price?.toLocaleString()}
+              ${priceWithDiscount.finalPrice}
             </p>
           </div>
         </div>
@@ -71,5 +74,7 @@ const ProductCard = memo(
     return prevProps.product.id === nextProps.product.id;
   }
 );
+
+ProductCard.displayName = 'ProductCard';
 
 export default ProductCard;

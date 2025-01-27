@@ -12,7 +12,6 @@ import FormSuccess from '../shared/ui/FormSuccess';
 import SubmitButton from '../shared/ui/SubmitButton';
 import Input from '../shared/ui/Input';
 import Socials from '../shared/ui/Socials';
-import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 
 function LoginForm() {
@@ -75,7 +74,7 @@ function LoginForm() {
         }
         return action(formData);
       }}
-      className="border-none w-full"
+      className="border-none w-full bg-background"
     >
       <Socials type="login" />
       {showTwoFactor && (

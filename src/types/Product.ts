@@ -92,16 +92,16 @@ export type TProductCard = InferQueryModel<
   {
     with: {
       images: true;
-      discount: true;
-      categoryToProducts: {
-        with: {
-          category: {
-            with: {
-              discount: true;
-            };
-          };
-        };
-      };
+      // discount: true;
+      // categoryToProducts: {
+      //   with: {
+      //     category: {
+      //       with: {
+      //         discount: true;
+      //       };
+      //     };
+      //   };
+      // };
     };
   }
 >;

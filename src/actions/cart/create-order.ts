@@ -68,15 +68,14 @@ const createOrder = async ({ orderDetails, formState }: createOrderProps) => {
 
   let order;
   try {
-    order = await db
-      .insert(schema.orders)
-      .values({
-        orderNo: order_no,
-        totalPrice: orderDetails.totalPrice,
-        userId: user.id,
-        couponId: coupons?.[0] || null,
-      })
-      .returning();
+    const toInsertData: typeof schema.orders.$inferInsert = {
+      orderNo: order_no,
+      totalPrice: String(orderDetails.totalPrice),
+      userId: user.id!,
+      couponId: coupons?.[0] || null,
+      orderStatus: schema.orderStatusEnum.PENDING,
+    };
+    order = await db.insert(schema.orders).values(toInsertData).returning();
 
     const itemsByStore: { [key: string]: TCartWithDetails['cartItems'] } = {};
     cart.cartItems.forEach((item) => {
@@ -99,14 +98,15 @@ const createOrder = async ({ orderDetails, formState }: createOrderProps) => {
 
       for (const item of items) {
         const { finalPrice } = calculatePriceWithDiscounts(item.product);
-        await db.insert(schema.orderItems).values({
+        const toInsertData: typeof schema.orderItems.$inferInsert = {
           orderId: order[0].id,
           ordersToStoreId: orderStore[0].id,
           productId: item.productId,
           quantity: item.quantity,
-          price: finalPrice,
+          price: String(finalPrice),
           selectedAttributes: item.selectedAttributes,
-        });
+        };
+        await db.insert(schema.orderItems).values(toInsertData);
 
         await db
           .update(schema.products)

@@ -14,6 +14,8 @@ import {
 import { db } from '@/lib/db';
 import { twoFactorConfirmations, users } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
+import { ZodError } from 'zod';
+import { NextAuthConfig } from 'next-auth';
 
 export default {
   adapter: DrizzleAdapter(db),
@@ -96,20 +98,24 @@ export default {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials) return null;
+        try {
+          if (!credentials) return null;
 
-        const validatedFields = signInSchema.safeParse(credentials);
-        if (!validatedFields.success) return null;
+          const validatedFields = signInSchema.safeParse(credentials);
+          if (!validatedFields.success) return null;
 
-        const { email, password } = validatedFields.data;
-        const user = await getUserByEmail(email);
+          const { email, password } = validatedFields.data;
+          const user = await getUserByEmail(email);
 
-        if (!user || !user.password) return null;
+          if (!user || !user.password) return null;
 
-        const passwordsMatch = await bcrypt.compare(password, user.password);
-        if (!passwordsMatch) return null;
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+          if (!passwordsMatch) return null;
 
-        return user;
+          return user || null;
+        } catch (error) {
+          return null
+        }
       },
     }),
     Github({
@@ -121,4 +127,4 @@ export default {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-} satisfies AuthConfig;
+} satisfies NextAuthConfig;

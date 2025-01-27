@@ -22,4 +22,6 @@ const ProductCardSkeleton = memo(({ className }: ProductCardSkeletonProps) => {
   );
 });
 
+ProductCardSkeleton.displayName = 'ProductCardSkeleton';
+
 export default ProductCardSkeleton;

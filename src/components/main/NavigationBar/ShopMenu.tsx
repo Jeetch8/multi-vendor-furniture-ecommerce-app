@@ -13,7 +13,7 @@ interface ShopMenuProps {
 const ShopMenu = ({ categories, setIsShopOpen }: ShopMenuProps) => {
   return (
     <motion.div
-      className="absolute w-full bg-white border-b border-gray-custom-2 py-8 shadow-sm"
+      className="absolute w-full bg-secondary border-b border-gray-custom-2 py-8 shadow-sm"
       initial="hidden"
       animate="visible"
       exit="exit"
@@ -21,7 +21,7 @@ const ShopMenu = ({ categories, setIsShopOpen }: ShopMenuProps) => {
       onMouseEnter={() => setIsShopOpen(true)}
       onMouseLeave={() => setIsShopOpen(false)}
     >
-      <Container>
+      <Container className="mx-auto px-4">
         <div className="grid grid-cols-5 gap-8">
           {categories.map((category) => (
             <motion.div

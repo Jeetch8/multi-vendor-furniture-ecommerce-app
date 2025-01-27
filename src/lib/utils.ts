@@ -8,8 +8,6 @@ import {
   Table,
 } from 'drizzle-orm';
 import { twMerge } from 'tailwind-merge';
-import { products } from './schema';
-import * as schema from './schema';
 import { PgTimestampString } from 'drizzle-orm/pg-core';
 import { SelectResultFields } from 'drizzle-orm/query-builders/select.types';
 

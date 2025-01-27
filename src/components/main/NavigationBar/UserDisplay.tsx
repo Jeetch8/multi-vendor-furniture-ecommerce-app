@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { signOut } from 'next-auth/react';
 import LinkUnderlined from '@/components/shared/Animated/LinkUnderlined';
+import ThemeTogglerBtn from '@/components/shared/ui/ThemeTogglerBtn';
 
 const UserDisplay = () => {
   const user = useCurrentUser();
@@ -30,7 +31,7 @@ const UserDisplay = () => {
         </div>
       </HoverCardTrigger>
       <HoverCardContent className="w-fit">
-        <div className="flex justify-between space-x-4">
+        <div className="flex justify-between space-x-4 items-start">
           <Avatar>
             <AvatarImage src={user.image ?? ''} />
             <AvatarFallback>
@@ -69,6 +70,7 @@ const UserDisplay = () => {
               </LinkUnderlined>
             </div>
           </div>
+          <ThemeTogglerBtn />
         </div>
       </HoverCardContent>
     </HoverCard>

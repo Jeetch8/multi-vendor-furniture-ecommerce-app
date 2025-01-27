@@ -229,3 +229,7 @@ export function generateSlug(str: string) {
     trim: true,
   });
 }
+
+export function timeout(delay: number) {
+  return new Promise((res) => setTimeout(res, delay));
+}

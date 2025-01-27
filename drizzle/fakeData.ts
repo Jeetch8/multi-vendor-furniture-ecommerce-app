@@ -10,6 +10,7 @@
 //   'Health Wellness',
 //   'Jewelry Watches',
 // ];
+export const productTags = ['New', 'Sale'];
 export const categoriesWithSubCategoriesArr = [
   {
     name: 'Electronics',
